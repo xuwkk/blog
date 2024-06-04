@@ -2,7 +2,7 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "Wangkun Xu",
+    "title": "About",
     "section": "",
     "text": "Welcome to my blog! Here I regularly update learning notes and news about my research."
   },
@@ -18,6 +18,34 @@
     "href": "index.html",
     "title": "Wangkun’s Blog",
     "section": "",
-    "text": "Tangent and Adjoint Sensitivity Analysis of Linear Equations\n\n\n\n\n\n\nlearning note\n\n\nautomatic differentiation\n\n\n\n\n\n\n\n\n\nMay 31, 2024\n\n\nWangkun Xu\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nMay 31, 2024\n\n\nWangkun Xu\n\n\n\n\n\n\nNo matching items"
+    "text": "Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives\n\n\n\n\n\n\nLearning Note\n\n\nAutomatic Differentiation\n\n\n\n\n\n\n\n\n\nJun 3, 2024\n\n\nWangkun Xu\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nNews\n\n\n\n\n\n\n\n\n\nMay 31, 2024\n\n\nWangkun Xu\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/learning/autometic_differentiation/adjoint_linear_equation.html",
+    "href": "posts/learning/autometic_differentiation/adjoint_linear_equation.html",
+    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives",
+    "section": "",
+    "text": "This post contains my learning note for YouTube video: Adjoint Equation of a Linear System of Equations - by implicit derivative.\nAll credits go to the author of the video."
+  },
+  {
+    "objectID": "posts/learning/autometic_differentiation/adjoint_linear_equation.html#settings",
+    "href": "posts/learning/autometic_differentiation/adjoint_linear_equation.html#settings",
+    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives",
+    "section": "Settings",
+    "text": "Settings\nConsider a linear system of equations \\[\nA(\\theta) x = b(\\theta)\n\\tag{1}\\] with a loss function \\(J(x)\\) . Our goal is to find the total derivative \\(\\frac{d J}{d \\theta}\\). This gradient can be useful for:\n\nGradient-based optimization.\nLocal sensitivity analysis of linear equations.\n\nwhere \\(\\theta\\in\\mathbb{R}^P\\) (this can be the weights of neural network); \\(A\\in\\mathbb{R}^{M\\times N}\\); \\(x\\in\\mathbb{R}^N\\); \\(b\\in\\mathbb{R}^M\\); \\(J(x;\\theta): \\mathbb{R}^N \\times \\mathbb{R}^P \\rightarrow \\mathbb{R}\\).\nNote that \\(x\\) is dependent on \\(\\theta\\) through \\(A\\) and \\(b\\). The total derivative \\(\\frac{d J}{d \\theta}\\) can be computed using the chain rule: \\[\n\\frac{d J}{d \\theta} = \\frac{\\partial J}{\\partial x} \\frac{d x}{d \\theta} + \\frac{\\partial J}{\\partial \\theta}\n\\tag{2}\\] where we use the Jacobian convension such that \\(\\frac{d x}{d \\theta}\\) is a matrix of size \\(N\\times P\\) and it is difficult to compute directly."
+  },
+  {
+    "objectID": "posts/learning/autometic_differentiation/adjoint_linear_equation.html#tangent-sensitivity-analysis",
+    "href": "posts/learning/autometic_differentiation/adjoint_linear_equation.html#tangent-sensitivity-analysis",
+    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives",
+    "section": "Tangent Sensitivity Analysis",
+    "text": "Tangent Sensitivity Analysis\nDo total derivative of (Equation 1) with respect to \\(\\theta\\): \\[\n\\frac{d}{d\\theta} (A x) =  \\frac{d b}{d\\theta}\n\\]\nwhere the unknown \\(\\frac{d x}{d \\theta}\\) can found by solving the following linear system\n\\[\nA\\cdot\\frac{d x}{d \\theta}  = \\frac{db}{d\\theta} - \\frac{d A}{d\\theta} x\n\\] where \\(\\frac{d x}{d \\theta}\\) can be solved as \\[\n\\frac{d x}{d \\theta} = A^{-1} \\left(\\frac{db}{d\\theta} - \\frac{d A}{d\\theta} x\\right)\n\\tag{3}\\]\nNote that the dimension \\(\\frac{d A}{d \\theta}\\in\\mathbb{R}^{N\\times N\\times P}\\). Therefore the product \\(\\frac{d A}{d\\theta} x\\) is incorrect (but it is ok here).\nThis is a batch of linear system we want to solve. Let \\(\\theta_i\\) be the \\(i\\)-th element of \\(\\theta\\), \\[\nA\\cdot\\frac{d x}{d \\theta_i}  = \\frac{db}{d\\theta_i} - \\underbrace{\\frac{d A}{d\\theta_i}}_{N\\times N} x, \\quad i=1,\\dots,P\n\\]\nWe can view \\(\\frac{d x}{d \\theta_i}\\) as the tangent of \\(x\\), e.g., \\(\\dot{x}_i = \\frac{d x}{d \\theta_i}\\). Then solving the above system follows the idea of tangent sensitivity analysis (or forward-mode AD). The matrix-vector products can be computed efficiently using the JVP. However, this method is less efficient when \\(P\\) is large."
+  },
+  {
+    "objectID": "posts/learning/autometic_differentiation/adjoint_linear_equation.html#adjoint-sensitivity-analysis",
+    "href": "posts/learning/autometic_differentiation/adjoint_linear_equation.html#adjoint-sensitivity-analysis",
+    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives",
+    "section": "Adjoint Sensitivity Analysis",
+    "text": "Adjoint Sensitivity Analysis\nPlug (Equation 3) into (Equation 2), we have \\[\n\\frac{d J}{d \\theta} = \\underbrace{\\frac{\\partial J}{\\partial x} A^{-1}}_{\\lambda^T:1\\times N} \\left(\\frac{db}{d\\theta} - \\frac{d A}{d\\theta} x\\right) + \\frac{\\partial J}{\\partial \\theta}\n\\]\nNow instead of solving the linear system as in the tangent method (which requires solving \\(P\\) linear systems), note that the term \\(\\frac{\\partial J}{\\partial x} A^{-1}\\) is a vector of size \\(1\\times N\\) which can be solved by the following linear system once: \\[\nA^T \\lambda = \\left(\\frac{\\partial J}{\\partial x}\\right)^T\n\\tag{4}\\]\nThen the gradient \\(\\frac{d J}{d \\theta}\\) can be computed as \\[\n\\frac{d J}{d \\theta} = \\lambda^T \\left(\\frac{db}{d\\theta} - \\frac{d A}{d\\theta} x\\right) + \\frac{\\partial J}{\\partial \\theta}\n\\]\nThis is the idea of adjoint sensitivity analysis (or reverse-mode AD). It can be considered as assigning the adjoint of \\(x\\) as \\(\\bar{x} = \\frac{\\partial J}{\\partial x}\\).\nThe adjoint sensitivity can be solved by solving two linear systems: {#eq-linear} for \\(x\\) and {#eq-adjoint} for \\(\\lambda\\). This is more efficient when \\(P\\) is large (especially when the loss function is a scalar).\nAlso note that the Jacobians \\(\\frac{d A}{d\\theta}\\), \\(\\frac{d b}{d\\theta}\\), $, and \\(\\frac{\\partial J}{\\partial x}\\) can be computed by automatic differentiation or analytical solution."
   }
 ]

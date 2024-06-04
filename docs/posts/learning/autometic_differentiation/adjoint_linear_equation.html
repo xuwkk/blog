@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Wangkun Xu">
-<meta name="dcterms.date" content="2024-05-31">
+<meta name="dcterms.date" content="2024-06-03">
 
-<title>Wangkun's Blog – Tangent and Adjoint Sensitivity Analysis of Linear Equations</title>
+<title>Wangkun's Blog – Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -92,15 +121,15 @@ ul.task-list li input[type="checkbox"] {
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../../about.html"> 
-<span class="menu-text">Wangkun Xu</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/xuwkk"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://profiles.imperial.ac.uk/wangkun.xu18/"> <i class="bi bi-file-person" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -115,10 +144,10 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Tangent and Adjoint Sensitivity Analysis of Linear Equations</h1>
+      <h1 class="title">Tangent and Adjoint Sensitivity Analysis of Linear Equations Using Implicit Derivatives</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">learning note</div>
-                <div class="quarto-category">automatic differentiation</div>
+                <div class="quarto-category">Learning Note</div>
+                <div class="quarto-category">Automatic Differentiation</div>
               </div>
                   </div>
   </div>
@@ -136,10 +165,16 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 31, 2024</p>
+        <p class="date">June 3, 2024</p>
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 4, 2024</p>
+      </div>
+    </div>
       
     </div>
     
@@ -155,8 +190,56 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<p>This post contains my learning note for <a href="https://www.youtube.com/watch?v=vlFN4qMtoH4&amp;list=PLISXH-iEM4Jk27AmSvISooRRKH4WtlWKP&amp;index=1">YouTube video: Adjoint Equation of a Linear System of Equations - by implicit derivative</a>.</p>
+<p>All credits go to the author of the video.</p>
+<section id="settings" class="level2">
+<h2 class="anchored" data-anchor-id="settings">Settings</h2>
+<p>Consider a linear system of equations <span id="eq-linear"><span class="math display">\[
+A(\theta) x = b(\theta)
+\tag{1}\]</span></span> with a loss function <span class="math inline">\(J(x)\)</span> . Our goal is to find the <strong>total</strong> derivative <span class="math inline">\(\frac{d J}{d \theta}\)</span>. This gradient can be useful for:</p>
+<ol type="1">
+<li>Gradient-based optimization.</li>
+<li>Local sensitivity analysis of linear equations.</li>
+</ol>
+<p>where <span class="math inline">\(\theta\in\mathbb{R}^P\)</span> (this can be the weights of neural network); <span class="math inline">\(A\in\mathbb{R}^{M\times N}\)</span>; <span class="math inline">\(x\in\mathbb{R}^N\)</span>; <span class="math inline">\(b\in\mathbb{R}^M\)</span>; <span class="math inline">\(J(x;\theta): \mathbb{R}^N \times \mathbb{R}^P \rightarrow \mathbb{R}\)</span>.</p>
+<p>Note that <span class="math inline">\(x\)</span> is dependent on <span class="math inline">\(\theta\)</span> through <span class="math inline">\(A\)</span> and <span class="math inline">\(b\)</span>. The total derivative <span class="math inline">\(\frac{d J}{d \theta}\)</span> can be computed using the chain rule: <span id="eq-loss"><span class="math display">\[
+\frac{d J}{d \theta} = \frac{\partial J}{\partial x} \frac{d x}{d \theta} + \frac{\partial J}{\partial \theta}
+\tag{2}\]</span></span> where we use the Jacobian convension such that <span class="math inline">\(\frac{d x}{d \theta}\)</span> is a matrix of size <span class="math inline">\(N\times P\)</span> and it is difficult to compute directly.</p>
+</section>
+<section id="tangent-sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="tangent-sensitivity-analysis">Tangent Sensitivity Analysis</h2>
+<p>Do total derivative of (<a href="#eq-linear" class="quarto-xref">Equation&nbsp;1</a>) with respect to <span class="math inline">\(\theta\)</span>: <span class="math display">\[
+\frac{d}{d\theta} (A x) =  \frac{d b}{d\theta}
+\]</span></p>
+<p>where the unknown <span class="math inline">\(\frac{d x}{d \theta}\)</span> can found by solving the following linear system</p>
+<p><span class="math display">\[
+A\cdot\frac{d x}{d \theta}  = \frac{db}{d\theta} - \frac{d A}{d\theta} x
+\]</span> where <span class="math inline">\(\frac{d x}{d \theta}\)</span> can be solved as <span id="eq-sol"><span class="math display">\[
+\frac{d x}{d \theta} = A^{-1} \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x\right)
+\tag{3}\]</span></span></p>
+<p>Note that the dimension <span class="math inline">\(\frac{d A}{d \theta}\in\mathbb{R}^{N\times N\times P}\)</span>. Therefore the product <span class="math inline">\(\frac{d A}{d\theta} x\)</span> is incorrect (but it is ok here).</p>
+<p>This is a <strong>batch</strong> of <strong>linear</strong> system we want to solve. Let <span class="math inline">\(\theta_i\)</span> be the <span class="math inline">\(i\)</span>-th element of <span class="math inline">\(\theta\)</span>, <span class="math display">\[
+A\cdot\frac{d x}{d \theta_i}  = \frac{db}{d\theta_i} - \underbrace{\frac{d A}{d\theta_i}}_{N\times N} x, \quad i=1,\dots,P
+\]</span></p>
+<p>We can view <span class="math inline">\(\frac{d x}{d \theta_i}\)</span> as the tangent of <span class="math inline">\(x\)</span>, e.g., <span class="math inline">\(\dot{x}_i = \frac{d x}{d \theta_i}\)</span>. Then solving the above system follows the idea of tangent sensitivity analysis (or forward-mode AD). The matrix-vector products can be computed efficiently using the JVP. However, this method is less efficient when <span class="math inline">\(P\)</span> is large.</p>
+</section>
+<section id="adjoint-sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="adjoint-sensitivity-analysis">Adjoint Sensitivity Analysis</h2>
+<p>Plug (<a href="#eq-sol" class="quarto-xref">Equation&nbsp;3</a>) into (<a href="#eq-loss" class="quarto-xref">Equation&nbsp;2</a>), we have <span class="math display">\[
+\frac{d J}{d \theta} = \underbrace{\frac{\partial J}{\partial x} A^{-1}}_{\lambda^T:1\times N} \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x\right) + \frac{\partial J}{\partial \theta}
+\]</span></p>
+<p>Now instead of solving the linear system as in the tangent method (which requires solving <span class="math inline">\(P\)</span> linear systems), note that the term <span class="math inline">\(\frac{\partial J}{\partial x} A^{-1}\)</span> is a vector of size <span class="math inline">\(1\times N\)</span> which can be solved by the following <strong>linear</strong> system <strong>once</strong>: <span id="eq-adjoint"><span class="math display">\[
+A^T \lambda = \left(\frac{\partial J}{\partial x}\right)^T
+\tag{4}\]</span></span></p>
+<p>Then the gradient <span class="math inline">\(\frac{d J}{d \theta}\)</span> can be computed as <span class="math display">\[
+\frac{d J}{d \theta} = \lambda^T \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x\right) + \frac{\partial J}{\partial \theta}
+\]</span></p>
+<p>This is the idea of adjoint sensitivity analysis (or reverse-mode AD). It can be considered as assigning the adjoint of <span class="math inline">\(x\)</span> as <span class="math inline">\(\bar{x} = \frac{\partial J}{\partial x}\)</span>.</p>
+<p>The adjoint sensitivity can be solved by solving two <strong>linear</strong> systems: {#eq-linear} for <span class="math inline">\(x\)</span> and {#eq-adjoint} for <span class="math inline">\(\lambda\)</span>. This is more efficient when <span class="math inline">\(P\)</span> is large (especially when the loss function is a scalar).</p>
+<p>Also note that the Jacobians <span class="math inline">\(\frac{d A}{d\theta}\)</span>, <span class="math inline">\(\frac{d b}{d\theta}\)</span>, $, and <span class="math inline">\(\frac{\partial J}{\partial x}\)</span> can be computed by automatic differentiation or analytical solution.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

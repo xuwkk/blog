@@ -148,6 +148,8 @@ window.Quarto = {
                                 <div class="quarto-categories">
                 <div class="quarto-category">Learning Note</div>
                 <div class="quarto-category">Auto Differentiation</div>
+                <div class="quarto-category">Sensitivity Analysis</div>
+                <div class="quarto-category">Implicit Function</div>
               </div>
                   </div>
   </div>
@@ -190,7 +192,7 @@ window.Quarto = {
 
 
 
-<p>This post contains my learning note for <a href="https://www.youtube.com/watch?v=vlFN4qMtoH4&amp;list=PLISXH-iEM4Jk27AmSvISooRRKH4WtlWKP&amp;index=1">YouTube video: Adjoint Equation of a Linear System of Equations - by implicit derivative</a>.</p>
+<p>This post contains my learning note for <a href="https://www.youtube.com/watch?v=vlFN4qMtoH4&amp;list=PLISXH-iEM4Jk27AmSvISooRRKH4WtlWKP&amp;index=1">YouTube: Adjoint Equation of a Linear System of Equations - by implicit derivative</a>.</p>
 <p>All credits go to the author of the video.</p>
 <section id="settings" class="level2">
 <h2 class="anchored" data-anchor-id="settings">Settings</h2>
@@ -235,10 +237,29 @@ A^T \lambda = \left(\frac{\partial J}{\partial x}\right)^T
 \frac{d J}{d \theta} = \lambda^T \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x\right) + \frac{\partial J}{\partial \theta}
 \]</span></p>
 <p>This is the idea of adjoint sensitivity analysis (or reverse-mode AD). It can be considered as assigning the adjoint of <span class="math inline">\(x\)</span> as <span class="math inline">\(\bar{x} = \frac{\partial J}{\partial x}\)</span>.</p>
-<p>The adjoint sensitivity can be solved by solving two <strong>linear</strong> systems: {#eq-linear} for <span class="math inline">\(x\)</span> and {#eq-adjoint} for <span class="math inline">\(\lambda\)</span>. This is more efficient when <span class="math inline">\(P\)</span> is large (especially when the loss function is a scalar).</p>
-<p>Also note that the Jacobians <span class="math inline">\(\frac{d A}{d\theta}\)</span>, <span class="math inline">\(\frac{d b}{d\theta}\)</span>, $, and <span class="math inline">\(\frac{\partial J}{\partial x}\)</span> can be computed by automatic differentiation or analytical solution.</p>
+<p>The adjoint sensitivity can be solved by solving two <strong>linear</strong> systems: (<a href="#eq-linear" class="quarto-xref">Equation&nbsp;1</a>) for <span class="math inline">\(x\)</span> and (<a href="#eq-adjoint" class="quarto-xref">Equation&nbsp;4</a>) for <span class="math inline">\(\lambda\)</span>. This is more efficient when <span class="math inline">\(P\)</span> is large (especially when the loss function is a scalar).</p>
+<p>Also note that the Jacobians <span class="math inline">\(\frac{d A}{d\theta}\)</span>, <span class="math inline">\(\frac{d b}{d\theta}\)</span>, <span class="math inline">\(\frac{dA}{d\theta}\)</span>, and <span class="math inline">\(\frac{\partial J}{\partial x}\)</span> can be computed by automatic differentiation or analytical solution.</p>
+<section id="alternative-derivation-using-lagrange-multiplier" class="level3">
+<h3 class="anchored" data-anchor-id="alternative-derivation-using-lagrange-multiplier">Alternative Derivation Using Lagrange Multiplier</h3>
+<p>This part is based on the <a href="https://www.youtube.com/watch?v=MlHKW7Ja-qs&amp;list=PLISXH-iEM4Jk27AmSvISooRRKH4WtlWKP&amp;index=2">YouTube: Adjoint Sensitivities of a Linear System of Equations - derived using the Lagrangian</a>.</p>
+<p>As the sensitivity analysis can be directly used for purturbation analysis in an optimization problem, e.g., to find how a small change on <span class="math inline">\(\theta\)</span> can affect the objective function <span class="math inline">\(J(x)\)</span>, we can consider the following optimization problem <span class="math display">\[
+\min_{x} J(x, \theta) \quad \text{s.t.} \quad A(\theta) x = b(\theta)
+\]</span></p>
+<p>The equality constraint can be regarded as the KKT condition of another convex optimization problem. I.e., the original problem is actually a bi-level optimization problem. The Lagrangian of the above problem is <span class="math display">\[
+\mathcal{L}(x, \theta, \lambda) = J(x(\theta), \lambda) + \lambda^T (b(\theta) - A(\theta) x)
+\]</span> where <span class="math inline">\(\lambda\)</span> is the Lagrange multiplier. The total derivative wrt <span class="math inline">\(\theta\)</span> is <span class="math display">\[
+\frac{d\mathcal{L}}{d\theta}  = \frac{\partial J}{\partial x} \frac{d x}{d \theta} + \frac{\partial J}{\partial \theta} + \lambda^T \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x - A(\theta)\frac{dx}{d\theta}\right)
+\]</span></p>
+<p>Again, the dimension of <span class="math inline">\(\frac{d A}{d\theta}\)</span> is incorrect. The difficult term is <span class="math inline">\(\frac{dx}{d\theta}\)</span>. After some arrangement, we have <span class="math display">\[
+\frac{d\mathcal{L}}{d\theta} = \frac{\partial J}{\partial \theta} + \lambda^T \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x\right) + \underbrace{\left(\frac{\partial J}{\partial x} - \lambda^T A\right)}_{\rightarrow 0} \frac{dx}{d\theta}
+\]</span></p>
+<p>Note that because <span class="math inline">\(x\)</span> is solved as the solution to <span class="math inline">\(Ax = b\)</span>, the equality constraint is always satisfied. Therefore, the value of <span class="math inline">\(\lambda\)</span> can be <strong>arbitrary</strong>. Consequently, we obtain the adjoint system the same to the previous derivation <a href="#eq-adjoint" class="quarto-xref">Equation&nbsp;4</a>.</p>
+<p>PLugging in <span class="math inline">\(\lambda\)</span> into the Lagrangian, we have <span class="math display">\[
+\frac{d \mathcal{L}}{d \theta} = \frac{d J}{d \theta} = \lambda^T \left(\frac{db}{d\theta} - \frac{d A}{d\theta} x\right) + \frac{\partial J}{\partial \theta}
+\]</span> where the first equality is due to <span class="math inline">\(Ax=b\)</span>.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

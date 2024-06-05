@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Wangkun Xu">
+<meta name="dcterms.date" content="2024-06-05">
 
-<title>Wangkun's Blog – Content</title>
+<title>Wangkun's Blog – Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -128,17 +99,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Wangkun’s Blog</span>
     </a>
   </div>
@@ -149,7 +120,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -172,92 +143,117 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Content</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Learning Note</div>
+                <div class="quarto-category">Auto Differentiation</div>
+                <div class="quarto-category">Sensitivity Analysis</div>
+                <div class="quarto-category">Implicit Function</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Wangkun Xu </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 5, 2024</p>
+      </div>
+    </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 5, 2024</p>
+      </div>
+    </div>
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Auto Differentiation">Auto Differentiation <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Implicit Function">Implicit Function <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Learning Note">Learning Note <span class="quarto-category-count">(2)</span></div><div class="category" data-category="News">News <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Sensitivity Analysis">Sensitivity Analysis <span class="quarto-category-count">(2)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<p>This post extends from the previous post on <a href="../../../posts/learning/autometic_differentiation/adjoint_linear_equation.html">linear system</a> to find the sensitivities of the parameter of nonlinear systems. This post is largely learnt from the <a href="https://www.youtube.com/watch?v=LzKHSEwxDWI&amp;list=PLISXH-iEM4Jk27AmSvISooRRKH4WtlWKP&amp;index=4&amp;t=29s">YouTube: Adjoint Sensitivities of a Non-Linear system of equations | Full Derivation</a> and <a href="https://www.youtube.com/watch?v=s-tJpZE26CM&amp;list=PLISXH-iEM4Jk27AmSvISooRRKH4WtlWKP&amp;index=5">YouTube: Lagrangian Perspective on the Derivation of Adjoint Sensitivities of Nonlinear Systems</a>.</p>
+<section id="settings" class="level2">
+<h2 class="anchored" data-anchor-id="settings">Settings</h2>
+<p>Consider a nonlinear system of equations <span class="math display">\[
+f(x, \theta) = 0
+\]</span> where <span class="math inline">\(x \in \mathbb{R}^N\)</span> is the state variable and <span class="math inline">\(\theta \in \mathbb{R}^P\)</span> is the parameter. Nonlinear equation solvers such as Newton’s method can be used to find <span class="math inline">\(x\)</span> given <span class="math inline">\(\theta\)</span>. Assume there is a scalar loss function <span class="math inline">\(J(x,\theta)\)</span> and our goal is to find the sensitivity or <strong>total</strong> gradient of <span class="math inline">\(J\)</span> with respect to <span class="math inline">\(\theta\)</span>: <span class="math inline">\(\frac{d J}{d \theta}\)</span>.</p>
+<p>The total derivative of <span class="math inline">\(J\)</span> is <span id="eq-d_J_d_theta"><span class="math display">\[
+\frac{d J}{d \theta} = \frac{\partial J}{\partial x} \frac{d x}{d \theta} + \frac{\partial J}{\partial \theta}
+\tag{1}\]</span></span> where <span class="math inline">\(\frac{d x}{d \theta}\)</span> is unknown. Do the total derivative of <span class="math inline">\(f\)</span> with respect to <span class="math inline">\(\theta\)</span>: <span id="eq-d_f_d_theta"><span class="math display">\[
+\frac{d f}{d \theta} = \frac{\partial f}{\partial x} \frac{d x}{d \theta} + \frac{\partial f}{\partial \theta} = 0
+\tag{2}\]</span></span></p>
+<p>Therefore, <span class="math inline">\(\frac{d x}{d \theta}\)</span> can be solved by the above <strong>linear</strong> equation. In detail, <a href="#eq-d_J_d_theta" class="quarto-xref">Equation&nbsp;1</a> can be rewritten as <span id="eq-d_J_d_theta_2"><span class="math display">\[
+\frac{d J}{d \theta} = -\frac{\partial J}{\partial x} \left( \frac{\partial f}{\partial x} \right)^{-1} \frac{\partial f}{\partial \theta} + \frac{\partial J}{\partial \theta}
+\tag{3}\]</span></span></p>
+</section>
+<section id="tangent-sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="tangent-sensitivity-analysis">Tangent Sensitivity Analysis</h2>
+<p>In the tangent (forward) method, the term <span class="math inline">\(\left( \frac{\partial f}{\partial x} \right)^{-1} \frac{\partial f}{\partial \theta}\)</span> is computed by solving the <strong>batch</strong> of linear system <a href="#eq-d_f_d_theta" class="quarto-xref">Equation&nbsp;2</a> directly. Denote the <span class="math inline">\(i\)</span>-th column of <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span> as <span class="math inline">\(g_i\)</span>, then <span class="math inline">\(P\)</span> linear systems need to be solved: <span class="math display">\[
+\frac{\partial f}{\partial x} \frac{dx}{d\theta_i} = -g_i
+\]</span></p>
+</section>
+<section id="adjoint-sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="adjoint-sensitivity-analysis">Adjoint Sensitivity Analysis</h2>
+<p><a href="#eq-d_J_d_theta_2" class="quarto-xref">Equation&nbsp;3</a> can be solved from left to right by first computing <span class="math inline">\(-\frac{\partial J}{\partial x} \left( \frac{\partial f}{\partial x} \right)^{-1}\)</span> and then multiplying <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span>. The adjoint <strong>linear</strong> system is <span id="eq-adjoint_linear_system"><span class="math display">\[
+\left( \frac{\partial f}{\partial x} \right)^T \lambda = -\left(\frac{\partial J}{\partial x}\right)^T
+\tag{4}\]</span></span> which can be solved by conjugate gradient method or LU deomposition. The Jacobian matrix <span class="math inline">\(\frac{\partial f}{\partial x}\)</span> may not need to be solved explicitely but can be found by VJP.</p>
+<p>In the adjoint method, there is only <strong>one</strong> <strong>linear</strong> system to solve (note that the original system is nonlinear), regardless of the number of parameters <span class="math inline">\(P\)</span>.</p>
+<section id="alternative-derivation-using-lagrangian" class="level3">
+<h3 class="anchored" data-anchor-id="alternative-derivation-using-lagrangian">Alternative Derivation using Lagrangian</h3>
+<p>Similar to the <a href="../../../posts/learning/autometic_differentiation/adjoint_linear_equation.html">linear system</a>, we can derive the adjoint sensitivity analysis for nonlinear system from the Lagrangian perspective.</p>
+<p>Consider the equality constrained optimization: <span class="math display">\[
+\min_{x} J(x, \theta) \quad \text{s.t.} \quad f(x, \theta) = 0
+\]</span></p>
+<p>The Lagrangian is <span class="math display">\[
+\mathcal{L}(x, \lambda, \theta) = J(x, \theta) + \lambda^T f(x, \theta)
+\]</span></p>
+<p>Take the total derivative of <span class="math inline">\(\mathcal{L}\)</span> with respect to <span class="math inline">\(\theta\)</span>: <span class="math display">\[
+\frac{d \mathcal{L}}{d \theta} = \frac{\partial J}{\partial \theta} + \frac{\partial J}{\partial x} \frac{dx}{d\theta} + \lambda^T \left(\frac{\partial f}{\partial \theta} + \frac{\partial f}{\partial x} \frac{dx}{d\theta}\right) = \frac{\partial J}{\partial \theta} + \lambda^T\frac{\partial f}{\partial \theta} + \left(\frac{\partial J}{\partial x} + \lambda^T \frac{\partial f}{\partial x}\right) \frac{dx}{d\theta}
+\]</span></p>
+<p>Because the equality constraint is always satisfied (as <span class="math inline">\(x\)</span> is solved from <span class="math inline">\(f(x, \theta) = 0\)</span>), we can set the dual variable <span class="math inline">\(\lambda\)</span> arbitarily. Here, we can choose to make the coefficient of <span class="math inline">\(\frac{dx}{d\theta}\)</span> to be zero so that this complex term never appears in the final expression. <span class="math display">\[
+\frac{\partial J}{\partial x} + \lambda^T \frac{\partial f}{\partial x} = 0
+\]</span> which is the adjoint equation <a href="#eq-adjoint_linear_system" class="quarto-xref">Equation&nbsp;4</a>.</p>
+<p>At last, because <span class="math inline">\(f(x,\theta)=0\)</span>, we have <span class="math display">\[
+\frac{d \mathcal{L}}{d \theta} = \frac{\partial J}{\partial \theta} + \lambda^T\frac{\partial f}{\partial \theta} = \frac{d J}{d\theta}
+\]</span></p>
+</section>
+<section id="relation-to-linear-system" class="level3">
+<h3 class="anchored" data-anchor-id="relation-to-linear-system">Relation to Linear System</h3>
+<p>We can rewrite the <a href="../../../posts/learning/autometic_differentiation/adjoint_linear_equation.html">linear system</a> as <span class="math display">\[
+f(x, \theta) = b(\theta) - A(\theta) x = 0
+\]</span> with <span class="math display">\[
+\frac{\partial f}{\partial \theta} = \frac{\partial f}{\partial b}\frac{db}{d\theta} + \frac{\partial f}{\partial A}\frac{dA}{d\theta} = \frac{db}{d\theta} - \frac{dA}{d\theta}x \neq 0
+\]</span></p>
+<p>Therefore, the total derivative can be written as <span class="math display">\[
+\frac{df}{d\theta} = \frac{\partial f}{\partial x} \frac{dx}{d\theta} + \frac{\partial f}{\partial \theta} = -A \frac{dx}{d\theta} + \frac{db}{d\theta} - \frac{dA}{d\theta}x
+\]</span> which recover the derivation of the <a href="../../../posts/learning/autometic_differentiation/adjoint_linear_equation.html">linear system</a>.</p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-Date
-</th>
-<th>
-Title
-</th>
-<th>
-Categories
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="Learning Note,Auto Differentiation,Sensitivity Analysis,Implicit Function" data-listing-date-sort="1717542000000" data-listing-file-modified-sort="1717594346940" data-listing-date-modified-sort="1717542000000" data-listing-reading-time-sort="3" data-listing-word-count-sort="587" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations" data-listing-filename-sort="adjoint_nonlinear_equation.qmd">
-<td>
-<span class="listing-date">Jun 5, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Auto Differentiation, Sensitivity Analysis, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="Learning Note,Auto Differentiation,Sensitivity Analysis,Implicit Function" data-listing-date-sort="1717369200000" data-listing-file-modified-sort="1717582766983" data-listing-date-modified-sort="1717455600000" data-listing-reading-time-sort="4" data-listing-word-count-sort="736" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Linear Equations" data-listing-filename-sort="adjoint_linear_equation.qmd">
-<td>
-<span class="listing-date">Jun 3, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_linear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Linear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Auto Differentiation, Sensitivity Analysis, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="News" data-listing-date-sort="1717110000000" data-listing-file-modified-sort="1717494434248" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="21" data-listing-title-sort="Welcome To My Blog" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 31, 2024</span>
-</td>
-<td>
-<a href="./posts/news/index.html" class="title listing-title">Welcome To My Blog</a>
-</td>
-<td>
-<span class="listing-categories">News</span>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

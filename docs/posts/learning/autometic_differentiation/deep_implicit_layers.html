@@ -182,7 +182,6 @@ window.Quarto = {
                                 <div class="quarto-categories">
                 <div class="quarto-category">Learning Note</div>
                 <div class="quarto-category">Auto Differentiation</div>
-                <div class="quarto-category">Sensitivity Analysis</div>
                 <div class="quarto-category">Implicit Function</div>
               </div>
                   </div>
@@ -365,57 +364,69 @@ z:= z - g(x,z)
 <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> z</span>
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>torch.random.manual_seed(<span class="dv">0</span>)</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">10</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">5</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> torch.randn(n,n).double() <span class="op">*</span> <span class="fl">0.5</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(batch_size,n, requires_grad<span class="op">=</span><span class="va">True</span>).double()</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'using the model'</span>)</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> FixedPointLayer(W, tol<span class="op">=</span><span class="fl">1e-10</span>, max_iter <span class="op">=</span> <span class="dv">50</span>).double()</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="co"># check with the numerical gradient</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>torch.autograd.gradcheck(model, x, check_undefined_grad<span class="op">=</span><span class="va">False</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> model(x)</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> loss_fn(z)</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>loss.backward()</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.W.grad)</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co"># implicit model method: only do it on single sample</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'using the implicit model on one sample'</span>)</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>z_ <span class="op">=</span> z[<span class="dv">0</span>].clone().detach()</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>x_ <span class="op">=</span> x[<span class="dv">0</span>].clone().detach()</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>dl_dz <span class="op">=</span> torch.func.grad(loss_fn)(z_)</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'dl_dz'</span>, dl_dz.shape)</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>df_dW, df_dz <span class="op">=</span> torch.func.jacfwd(implicit_model, argnums <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">2</span>))(W, x_, z_)</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'df_dW'</span>, df_dW.shape)</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'df_dz'</span>, df_dz.shape)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> implicit_model(W, x, z):</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the g function</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> z <span class="op">-</span> torch.tanh(W <span class="op">@</span> z <span class="op">+</span> x)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> implicit_model_test(W, x, z):</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x.dim() <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        <span class="co"># single sample case</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'using the implicit model on one sample'</span>)</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        z_ <span class="op">=</span> z.clone().detach()</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        x_ <span class="op">=</span> x.clone().detach()</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        dl_dz <span class="op">=</span> torch.func.grad(loss_fn)(z_)</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>        df_dW, df_dz <span class="op">=</span> torch.func.jacfwd(implicit_model, argnums <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">2</span>))(W, x_, z_)</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>        adjoint_variable <span class="op">=</span> torch.linalg.solve(df_dz.T, <span class="op">-</span>dl_dz)</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>        dl_dW <span class="op">=</span> torch.einsum(<span class="st">'i,ikl-&gt;kl'</span>, adjoint_variable, df_dW)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'using the implicit model on all samples'</span>)</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>        z <span class="op">=</span> z.clone().detach()</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x.clone().detach()</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>        dl_dz <span class="op">=</span> torch.func.grad(loss_fn)(z)</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>        jacfwd_batched <span class="op">=</span> torch.vmap(torch.func.jacfwd(implicit_model, argnums <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">2</span>)), in_dims <span class="op">=</span> (<span class="va">None</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>        df_dW, df_dz <span class="op">=</span> jacfwd_batched(W, x, z)</span>
 <span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>adjoint_variable <span class="op">=</span> torch.linalg.solve(df_dz.T, <span class="op">-</span>dl_dz)</span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'adjoint_variable'</span>, adjoint_variable.shape)</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>dl_dW <span class="op">=</span> torch.einsum(<span class="st">'i,ikl-&gt;kl'</span>, adjoint_variable, df_dW)</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'dl_dW'</span>, dl_dW)</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="co"># implicit model all</span></span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'using the implicit model on all samples'</span>)</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>dl_dz <span class="op">=</span> torch.func.grad(loss_fn)(z)</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'dl_dz'</span>, dl_dz.shape)</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>        adjoint_variable <span class="op">=</span> torch.linalg.solve(df_dz.transpose(<span class="dv">1</span>,<span class="dv">2</span>), <span class="op">-</span>dl_dz)</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>        dl_dW <span class="op">=</span> torch.einsum(<span class="st">'bi,bikl-&gt;kl'</span>, adjoint_variable, df_dW)</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'dl_dz'</span>, dl_dz.shape)</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'df_dW'</span>, df_dW.shape)</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'df_dz'</span>, df_dz.shape)</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'adjoint_variable'</span>, adjoint_variable.shape)</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'dl_dW'</span>, dl_dW)</span>
 <span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>jacfwd_batched <span class="op">=</span> torch.vmap(torch.func.jacfwd(implicit_model, argnums <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">2</span>)), in_dims <span class="op">=</span> (<span class="va">None</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>df_dW, df_dz <span class="op">=</span> jacfwd_batched(W, x, z)</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'df_dW'</span>, df_dW.shape)</span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'df_dz'</span>, df_dz.shape)</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>adjoint_variable <span class="op">=</span> torch.linalg.solve(df_dz.transpose(<span class="dv">1</span>,<span class="dv">2</span>), <span class="op">-</span>dl_dz)</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'adjoint_variable'</span>, adjoint_variable.shape)</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="co"># maint function</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>torch.random.manual_seed(<span class="dv">0</span>)</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> torch.randn(n,n).double() <span class="op">*</span> <span class="fl">0.5</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(batch_size,n, requires_grad<span class="op">=</span><span class="va">True</span>).double()</span>
 <span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>dl_dW <span class="op">=</span> torch.einsum(<span class="st">'bi,bikl-&gt;kl'</span>, adjoint_variable, df_dW)</span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'dl_dW'</span>, dl_dW)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In the above example, <code>torch.vmap()</code> is used for multi-batch implementation of the implicit function and the Jacobian. The <code>torch.func.jacfwd()</code> is used for the Jacobian calculation. The <code>torch.linalg.solve()</code> is used for the linear system solution. The <code>torch.einsum()</code> is used for the matrix multiplication.</p>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'using the model'</span>)</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> FixedPointLayer(W, tol<span class="op">=</span><span class="fl">1e-10</span>, max_iter <span class="op">=</span> <span class="dv">50</span>).double()</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="co"># check with the numerical gradient</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>torch.autograd.gradcheck(model, x, check_undefined_grad<span class="op">=</span><span class="va">False</span>, raise_exception<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> model(x)</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> loss_fn(z)</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>loss.backward()</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.W.grad)</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="co"># implicit model method</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>implicit_model_test(W, x[<span class="dv">0</span>], z[<span class="dv">0</span>])</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>implicit_model_test(W, x, z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the above example, <code>torch.vmap()</code> is used for multi-batch implementation of the implicit function and the Jacobian. The <code>torch.func.jacfwd()</code> is used for the Jacobian calculation. Note that the Jacobian <span class="math inline">\(\frac{\partial g}{\partial z}\)</span> is found by automatic differentiation, instead of analytical computation. The <code>torch.linalg.solve()</code> is used for the linear system solution. The <code>torch.einsum()</code> is used for the matrix multiplication.</p>
 <p>In detail, in</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jacfwd_batched <span class="op">=</span> torch.vmap(torch.func.jacfwd(implicit_model, argnums <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">2</span>)), in_dims <span class="op">=</span> (<span class="va">None</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>torch.func.jacfwd(implicit_model, argnums = (0,2))</code> is to find the Jacobian of the implicit model with respect to <span class="math inline">\(W\)</span> and <span class="math inline">\(z\)</span>. The <code>torch.vmap()</code> is to apply the <code>torch.func.jacfwd()</code> to each batch of the input. The <code>in_dims = (None, 0, 0)</code> is to specify that only <code>z</code> and <code>x</code> are batched while <code>W</code> is not.</p>

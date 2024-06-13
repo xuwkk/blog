@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/learning/autometic_differentiation/differetiable_convex_layer.html",
       "/posts/learning/autometic_differentiation/deep_implicit_layers.html",
       "/posts/learning/power_system/power_system_operation.html",
       "/posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html",

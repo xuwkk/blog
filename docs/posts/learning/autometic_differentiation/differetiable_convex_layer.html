@@ -1,2 +1,741 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"></html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Wangkun Xu">
+<meta name="dcterms.date" content="2024-06-11">
+
+<title>Wangkun's Blog – Deep Implicit Layers: Differentiable Convex Layer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Wangkun’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/xuwkk"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://profiles.imperial.ac.uk/wangkun.xu18/"> <i class="bi bi-file-person" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Deep Implicit Layers: Differentiable Convex Layer</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Learning Note</div>
+                <div class="quarto-category">Auto Differentiation</div>
+                <div class="quarto-category">Implicit Function</div>
+                <div class="quarto-category">Paper Read</div>
+                <div class="quarto-category">Optimization</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Wangkun Xu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 11, 2024</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 13, 2024</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In this post, I summarize my learning note on another type of implicit model - the differentiable convex layer. This layer has similar formulation, forward, and backward passes as the fixed point layer. This is because its implicit function can be formulated by the KKT condition, no matter which off-the-shelf optimization solver is used. This topic is related to the <a href="../../../posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html">tangent and adjoint sensitivity analysis of nonlinear system</a> as the KKT condition forms a nonlinear system in general. The main reference is the paper Differentiable Convex Optimization Layers by <a href="https://arxiv.org/abs/1910.12430">Amos et al.&nbsp;(2019)</a> and the <a href="https://implicit-layers-tutorial.org/differentiable_optimization/">blog: differentiable optimization</a>.</p>
+</section>
+<section id="formulation-on-convex-optimization-layer" class="level2">
+<h2 class="anchored" data-anchor-id="formulation-on-convex-optimization-layer">Formulation on Convex Optimization Layer</h2>
+<p>Consider the following optimization proble: <span class="math display">\[
+\begin{aligned}
+\underset{z}{\operatorname{minimize}} &amp; f(z) \\
+\text { subject to } &amp; g(z) \leq 0 \\
+&amp; h(z)=0,
+\end{aligned}
+\]</span></p>
+<p>To make the optimization problem convex, we assume that <span class="math inline">\(f(z)\)</span> is convex, <span class="math inline">\(g(z)\)</span> is convex, and <span class="math inline">\(h(z)\)</span> is affine. The KKT condition of this optimization problem is <span class="math display">\[
+\begin{aligned}
+g\left(z^{\star}\right) &amp; \leq 0 \\
+h\left(z^{\star}\right) &amp; =0 \\
+\lambda^{\star} &amp; \geq 0 \\
+\lambda^{\star} \circ g\left(z^{\star}\right) &amp; =0 \\
+\nabla f\left(z^{\star}\right)+\sum_{i=1}^m \lambda_i^{\star} \nabla g_i\left(z^{\star}\right)+\sum_{i=1}^p \nu_i^{\star} \nabla h_i\left(z^{\star}\right) &amp; =0
+\end{aligned}
+\]</span></p>
+<p>Similarly to the previous parametric setting, we can define the convex layer as <span class="math display">\[
+\begin{aligned}
+z^{\star}(x)=\underset{z}{\operatorname{argmin}} &amp; f(z, x) \\
+\text { subject to } &amp; g(z, x) \leq 0 \\
+&amp; h(z, x)=0
+\end{aligned}
+\]</span> where <span class="math inline">\(z\)</span> is the decision variable and <span class="math inline">\(x\)</span> is the input of the layer or the parameter of the optimization problem. Apart from <span class="math inline">\(z^\star(x)\)</span> (as an implicit function of <span class="math inline">\(x\)</span>), we can also include the dual variables, <span class="math display">\[
+(z^\star, \lambda^\star, \nu^\star)(x)
+\]</span></p>
+<p>The differentiable convex layer can be viewed as 1) a nonlinear implicit equation <span class="math inline">\(G(x,\lambda,\nu,x) = 0\)</span> and 2) a fixed point iteration as iterative optimization algorithm (e.g., interior point, SQP, ADMM, etc) can be used to solve the optimization problem.</p>
+<p>The equality condition KKT can be written as: <span class="math display">\[
+G(z, \lambda, \nu,x)=\left[\begin{array}{c}
+\frac{\partial}{\partial z} f(z, x)+\frac{\partial}{\partial z} g(z, x)^T \lambda+\frac{\partial}{\partial z} h(z, x)^T \nu \\
+\lambda \circ g(z,x) \\
+h(z,x)
+\end{array}\right]
+\]</span> where <span class="math inline">\(\circ\)</span> denotes the element-wise product.</p>
+<p>Assume that the optimal primal and dual pair has been found by the <strong>forward pass</strong>. At the optimal point, we have <span class="math display">\[
+G(z^\star(x), \lambda^\star(x), \nu^\star(x), x) = 0
+\]</span></p>
+<section id="general-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="general-formulation">General Formulation</h3>
+<p>Denote <span class="math inline">\(y(x) = (z^\star(x), \lambda^\star(x), \nu^\star(x))\)</span>, then we can directly use the method implemented in <a href="../../../posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html">nonlinear equation sensitivity analysis</a> to compute the gradient of <span class="math inline">\(y(x)\)</span> with respect to <span class="math inline">\(x\)</span>. Do the <strong>total derivative</strong> with respect to <span class="math inline">\(x\)</span>: <span class="math display">\[
+\frac{d G}{d x} = \frac{\partial G}{\partial y}\frac{d y}{d x} + \frac{\partial G}{\partial x} = 0
+\]</span></p>
+<p>Therefore, the Jacobian is found as <span class="math display">\[
+\frac{d y}{d x} = -\left(\frac{\partial G}{\partial y}\right)^{-1} \frac{\partial G}{\partial x}
+\]</span></p>
+<p>In the backward pass, the adjoint of the optimal point <span class="math inline">\(\dot{y}\)</span> is computed backpropagated by the scalar loss <span class="math inline">\(\ell(\cdot)\)</span> as <span class="math inline">\(\dot{y} = \frac{\partial \ell}{\partial y}\)</span>. Note that when <span class="math inline">\(\ell(\cdot)\)</span> does not depend on the primal and dual variables, the associated adjoint is zero.</p>
+<p>Consequently, <span class="math display">\[
+\frac{d y}{d x} = - \frac{d \ell}{d y} \left(\frac{\partial G}{\partial y}\right)^{-1} \frac{\partial G}{\partial x}
+\]</span></p>
+<p>The same treatment as in <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> can be used to compute the above gradient. In detail, the first two items form the adjoint equation of <span class="math inline">\(y\)</span> whose adjoint (or gradient) needs to be modified. <span id="eq-adjoint"><span class="math display">\[
+\left(\frac{\partial G}{\partial y}\right)^T \dot{y} = \frac{\partial G}{\partial x}
+\tag{1}\]</span></span></p>
+</section>
+<section id="detailed-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="detailed-formulation">Detailed Formulation</h3>
+<p>The partial Jacobian <span class="math inline">\(\frac{\partial G}{\partial y}\)</span> can be analytically computed as <span class="math display">\[
+\frac{\partial}{\partial z, \lambda, \nu} G\left(z^{\star}, \lambda^{\star}, \nu^{\star}, x\right)=
+\left[\begin{array}{ccc}
+\frac{\partial^2}{\partial z^2} f\left(z^{\star}, x\right)+\sum_{i=1}^m \lambda_i^{\star} \frac{\partial^2}{\partial z^2} g_i\left(z^{\star}, x\right) &amp; \frac{\partial}{\partial z} g\left(z^{\star}, x\right) &amp; \frac{\partial}{\partial z} h\left(z^{\star}, x\right) \\
+\frac{\partial}{\partial z} g\left(z^{\star}, x\right)^T \operatorname{diag}\left(\lambda^{\star}\right) &amp; \operatorname{diag}\left(g\left(z^{\star}, x\right)\right) &amp; 0 \\
+\frac{\partial}{\partial z} h\left(z^{\star}, x\right)^T &amp; 0 &amp; 0
+\end{array}\right]
+\]</span></p>
+</section>
+<section id="quadratic-programming-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="quadratic-programming-formulation">Quadratic Programming Formulation</h3>
+<p>In the <a href="https://arxiv.org/abs/1703.00443">OptNet paper</a>, the author implemented the differentiable QP layer. In this section, the explicit formulations are derived. We will follow the same notation in the</p>
+<p>Consider the following QP problem: <span class="math display">\[
+\begin{aligned}
+\min_z &amp; \quad \frac{1}{2} z^T Q z + q^T z \\
+\text{s.t.} &amp; \quad A z = b \\
+&amp; \quad G z \leq h
+\end{aligned}
+\]</span> where the parameters <span class="math inline">\(Q, q, A, b, C, h\)</span> are functions of the input <span class="math inline">\(z_i\)</span> (the term <span class="math inline">\(z_i\)</span> is used as in the paper this is referred to the output from the previous layer). Our goal is to compute the Jacobian of <span class="math inline">\(\frac{d \ell}{d z_i}\)</span>.</p>
+<p>The KKT condition (only the equality part) of the above QP can be written as <span class="math display">\[
+\begin{aligned}
+Qz^\star + q + A^T \nu^\star + C^T \lambda^\star &amp;= 0 \\
+Az^\star - b &amp;= 0 \\
+D(\lambda^\star) (Gz^\star - h) &amp;= 0
+\end{aligned}
+\]</span> where <span class="math inline">\(D(\lambda^\star)\)</span> is a diagonal matrix with the diagonal elements being <span class="math inline">\(\lambda^\star\)</span>.</p>
+<p>Differentiating the KKT equations with respect to the input <span class="math inline">\(z_i\)</span> gives <span class="math display">\[
+\begin{aligned}
+\frac{dQ}{dz_i}z^\star + Q\frac{dz^\star}{dz_i} + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + A^T \frac{d\nu^\star}{dz_i} + \frac{dG^T}{dz_i}\lambda^\star + G^T \frac{d\lambda^\star}{dz_i} &amp;= 0 \\
+\frac{dA}{dz_i}z^\star + A\frac{dz^\star}{dz_i} - \frac{db}{dz_i} &amp;= 0 \\
+D(Gz^\star - h)\frac{dz^\star}{dz_i} + D(\lambda^\star)\left(\frac{dG}{dz_i}z^\star + G\frac{dz^\star}{dz_i} - \frac{dh}{dz_i} \right) &amp;=0
+\end{aligned}
+\]</span> which can be compactly written as matrix form <span class="math display">\[
+\begin{bmatrix}
+Q &amp; G^T &amp; A^T \\
+D(\lambda^\star)G &amp; D(Gz^\star - h) &amp; 0 \\
+A &amp; 0 &amp; 0
+\end{bmatrix} \begin{bmatrix} \frac{dz}{dz_i} \\ \frac{d\lambda}{dz_i} \\ \frac{d\nu}{dz_i} \end{bmatrix} = -\begin{bmatrix} \frac{dQ}{dz_i}z^\star + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + \frac{dG^T}{dz_i}\lambda \\ D(\lambda^\star)\frac{dG}{dz_i}z^\star - D(\lambda^\star)\frac{dh}{dz_i} \\ \frac{dA}{dz_i}z - \frac{db}{dz_i} \end{bmatrix}
+\]</span></p>
+<p>The paper also suggest using the adjoint method to compute the gradient of the loss with respect to the input <span class="math inline">\(z_i\)</span>.</p>
+<p>The paper also finds out that the above matrix (that needs to be inverted when solving the adjoint equation) has been already computed/factorized during the forward pass using the interior point method. Therefore, the computational cost of backpropagation is ‘almost free’. This finding is similar to the <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> where the Jacobian of the fixed point iteration is already computed during the forward pass using the Newton’s method.</p>
+</section>
+<section id="steps" class="level3">
+<h3 class="anchored" data-anchor-id="steps">Steps</h3>
+<p>Similar to the <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a>. The steps of implementing the differentiable convex layer are:</p>
+<ol type="1">
+<li><strong>Outside the gradient tape</strong>, solve the optimization problem to find the optimal primal and dual variables <span class="math inline">\((z^\star, \lambda^\star, \nu^\star)\)</span> using any off-the-shelf optimization solver, such as interior point, SQP, ADMM, etc.</li>
+<li><strong>Inside the gradient tape</strong>, engage the input <span class="math inline">\(x\)</span> to the computation graph by <span class="math inline">\((z,\lambda,\nu):= (z^\star,\lambda^\star,\nu^\star) - G(z^\star,\lambda^\star,\nu^\star,x)\)</span>. This will provide the the gradient <span class="math inline">\(-\frac{d G}{d x}\)</span> in the computation graph.</li>
+<li><strong>Register the gradient</strong> of <span class="math inline">\((z,\lambda,\nu)\)</span> with the solution of the linear adjoint system <a href="#eq-adjoint" class="quarto-xref">Equation&nbsp;1</a>.</li>
+</ol>
+</section>
+<section id="pytorch-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="pytorch-implementation">Pytorch Implementation</h3>
+<p>An example code snippet, including the an implementation of <code>OptNet</code> and comparison to <code>CvxpyLayers</code> can be found at <a href="https://github.com/xuwkk/blog_code">my-github</a>.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

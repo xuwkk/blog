@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Wangkun Xu">
+<meta name="dcterms.date" content="2024-06-09">
 
-<title>Wangkun's Blog – Content</title>
+<title>Wangkun's Blog – Unit Commitment Problem and Economic Dispatch</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TSYFSJPRKH"></script>
 
 <script type="text/javascript">
@@ -137,17 +108,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Wangkun’s Blog</span>
     </a>
   </div>
@@ -158,7 +129,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -181,136 +152,238 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Content</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Unit Commitment Problem and Economic Dispatch</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Learning Note</div>
+                <div class="quarto-category">Power System Operation</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Wangkun Xu </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 9, 2024</p>
+      </div>
+    </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 9, 2024</p>
+      </div>
+    </div>
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="Auto Differentiation">Auto Differentiation <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Implicit Function">Implicit Function <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Learning Note">Learning Note <span class="quarto-category-count">(6)</span></div><div class="category" data-category="News">News <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Optimization">Optimization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Paper Read">Paper Read <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Power System Operation">Power System Operation <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Sensitivity Analysis">Sensitivity Analysis <span class="quarto-category-count">(2)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-
-
-
-
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<table class="quarto-listing-table table">
+<p>In the previous post <a href="posts/learning/power_system/power_system_operation.qmd">Power System Operation: AC and DC Power Flow Model</a>, we discuss how to model the power system in the steady-state for both AC and DC formats. In this post, unit commitment (UC) problem and econimic dispatch (ED) will be formulated. The UC problem is usually solved in day-ahead manner to decide the on/off conditions and the set-points of the generator. It includes 1). the simplest UC problem without binary variables, 2). the UC problem with binary variables. Both problem considers the network constraints and reserve requirements. The ED problem focuses more on ‘real-time’ balance of the load and generation and meet the physical constraints and safety requirements.</p>
+<p>Note that the UC and ED can be formulated in different ways, including stochastic, robust, and chance-constrained formats. In this post, we will focus on the deterministic formulation.</p>
+<section id="unit-commitment-without-binary-variables" class="level2">
+<h2 class="anchored" data-anchor-id="unit-commitment-without-binary-variables">Unit Commitment Without Binary Variables</h2>
+<p>The UC without binary varibales can be formulated as linear programming (LP) problem as follows:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\min_{P_g, \theta, P_{ls}, P_{sc}, P_{wc}} &amp; \sum_{t=1}^T c_{gv}^TP_g(t) + c_{ls}^TP_{ls}(t) + c_{sc}^TP_{sc}(t) + c_{wc}^TP_{wc}(t) \\
+\text{s.t.} &amp; P_g^{\text{min}} \leq P_g(t) \leq P_g^{\text{max}} \\
+&amp; -R_{\text{down}} \leq P_g(t) - P_g(t-1) \leq R_{\text{up}} \\
+&amp; -P_f^{\text{max}} \leq B_f\theta(t) + P_{f,\text{shift}} \leq P_f^{\text{max}} \\
+&amp; C_gP_g(t) + C_s(P_s(t) - P_{sc}(t)) + C_w(P_w(t) - P_{wc}(t)) - C_l(P_l(t) - P_{ls}(t)) \\
+&amp;  \qquad = B_{\text{bus}}\theta(t) + P_{\text{bus,shift}} \\
+&amp; \theta_{\text{ref}}(t) = \theta_0, \quad \forall t=1,2,\ldots,T \\
+&amp; \sum P_g^{\text{max}} \geq \sum_{i=1}^TP_g(t) + r(t) \\
+&amp; 0 \leq P_{ls}(t) \leq P_l(t), \quad \forall t=1,2,\ldots,T \\
+&amp; 0 \leq P_{sc}(t) \leq P_s(t), \quad \forall t=1,2,\ldots,T \\
+&amp; 0 \leq P_{wc}(t) \leq P_w(t), \quad \forall t=1,2,\ldots,T \\
+\end{aligned}
+\]</span></p>
+<p>The decision variables include</p>
+<ul>
+<li>Generator output <span class="math inline">\(P_g(t)\)</span></li>
+<li>Load shedding <span class="math inline">\(P_{ls}(t)\)</span></li>
+<li>Solar energy curtailment <span class="math inline">\(P_{sc}(t)\)</span></li>
+<li>Wind energy curtailment <span class="math inline">\(P_{wc}(t)\)</span></li>
+<li>Bus voltage angle <span class="math inline">\(\theta(t)\)</span></li>
+</ul>
+<p>All the decision variables are vectors and from <span class="math inline">\(t=1\)</span> to <span class="math inline">\(T\)</span>. The objective function is to minimize the total cost, which includes the generator cost, load shedding cost, solar curtailment cost, and wind curtailment cost. The constraints include the generator output limits, ramping limits, line flow limits, power balance, bus voltage angle reference, and reserve requirements. Meanwhile, the parameters include</p>
+<ul>
+<li>Load <span class="math inline">\(P_l(t)\)</span></li>
+<li>Solar generation <span class="math inline">\(P_s(t)\)</span></li>
+<li>Wind generation <span class="math inline">\(P_w(t)\)</span></li>
+<li>Reserve requirement <span class="math inline">\(r(t)\)</span> which are assumed to be known.</li>
+</ul>
+<p>The initial condition, e.g., <span class="math inline">\(P_g(0)\)</span> should also be given.</p>
+<p>The definition of the bus and branch admittance matrix <span class="math inline">\(B_{\text{bus}}\)</span> and <span class="math inline">\(B_f\)</span> are the same as the previous post <a href="posts/learning/power_system/power_system_operation.qmd">Power System Operation: AC and DC Power Flow Model</a>.</p>
+</section>
+<section id="unit-commitment-with-binary-variables" class="level2">
+<h2 class="anchored" data-anchor-id="unit-commitment-with-binary-variables">Unit Commitment With Binary Variables</h2>
+<p>The UC with binary variables can be formulated as mixed-integer linear programming (MILP) problem as follows. Apart from the decision variables in the previous section, the binary variables <span class="math inline">\(u(t)\)</span> are introduced to decide the on/off status of the generator.</p>
+<p>The optimization problem can be formulated as <span class="math display">\[
+\begin{aligned}
+\min_{u_g, y_g, z_g, P_g, \theta, P_{ls}, P_{sc}, P_{wc}} &amp; \quad \sum_{t=1}^T c_{gf}^Tu_g(t) + c_{gv}^TP_g(t) + c_{gsu}^Ty_g(t) + c_{gsd}^Tz_g(t) + c_{ls}^TP_{ls}(t) + c_{sc}^TP_{sc}(t) + c_{wc}^TP_{wc}(t) \\
+\text{s.t.} &amp; \quad y_g(t) - z_g(t) = u_g(t) - u_g(t-1) \\
+&amp; \quad y_g(t) + z_g(t) \leq 1 \\
+&amp; \quad u_g(t)\circ P_g^{\text{min}} \leq P_g(t) \leq u_g(t)\circ P_g^{\text{max}} \\
+&amp; \quad P_g(t) - P_g(t-1) \leq R_{gu}u_g(t-1) + R_{gsu} y_g(t)\\
+&amp; \quad P_g(t-1) - P_g(t) \leq R_{du}u_g(t) + R_{gsd} z_g(t)\\
+&amp; \quad -P_f^{\text{max}} \leq B_f\theta(t) + P_{f,\text{shift}} \leq P_f^{\text{max}} \\
+&amp; \quad C_gP_g(t) + C_s(P_s(t) - P_{sc}(t)) + C_w(P_w(t) - P_{wc}(t)) - C_l(P_l(t) - P_{ls}(t)) \\
+&amp; \quad  \qquad = B_{\text{bus}}\theta(t) + P_{\text{bus,shift}} \\
+&amp; \quad \theta_{\text{ref}}(t) = \theta_0, \quad \forall t=1,2,\ldots,T \\
+&amp; \quad \sum u_g(t) \circ P_g^{\text{max}} \geq \sum_{i=1}^TP_g(t) + r(t) \\
+&amp; \quad 0 \leq P_{ls}(t) \leq P_l(t), \quad \forall t=1,2,\ldots,T \\
+&amp; \quad 0 \leq P_{sc}(t) \leq P_s(t), \quad \forall t=1,2,\ldots,T \\
+&amp; \quad 0 \leq P_{wc}(t) \leq P_w(t), \quad \forall t=1,2,\ldots,T \\
+&amp; \quad u_g(t) \in \{0,1\}, \quad y_g(t) \in \{0,1\}, \quad z_g(t) \in \{0,1\}
+\end{aligned}
+\]</span> where <span class="math inline">\(\circ\)</span> denotes the element-wise product.</p>
+<p>Apart from the decision variables in the previous section, the following binary variables are introduced:</p>
+<ul>
+<li>Generator on/off status <span class="math inline">\(u(t)\)</span> with cost <span class="math inline">\(c_{gf}\)</span></li>
+<li>Generator start-up status <span class="math inline">\(y(t)\)</span> with cost <span class="math inline">\(c_{gsu}\)</span></li>
+<li>Generator shut-down status <span class="math inline">\(z(t)\)</span> with cost <span class="math inline">\(c_{gsd}\)</span></li>
+</ul>
+<p>The objective function is to minimize the total cost, which includes the generator fixed (on) cost, generator variable cost, generator start-up cost, generator shut-down cost, load shedding cost, solar curtailment cost, and wind curtailment cost.</p>
+<p>The first two constraints denote the relationship between the on-off status and the start-up and shut-down status, which can be formulated as the following table:</p>
+<table class="caption-top table">
+<caption>The relationship between the on-off status and the start-up and shut-down status</caption>
 <thead>
-<tr>
-<th>
-Date
-</th>
-<th>
-Title
-</th>
-<th>
-Categories
-</th>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(u_g(t-1)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(u_g(t)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(y_g(t)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(z_g(t)\)</span></th>
+<th style="text-align: center;">Explain</th>
 </tr>
 </thead>
-<tbody class="list">
-<tr data-index="0" data-categories="Learning Note,Auto Differentiation,Implicit Function,Paper Read,Optimization" data-listing-date-sort="1718060400000" data-listing-file-modified-sort="1718284341453" data-listing-date-modified-sort="1718284341000" data-listing-reading-time-sort="5" data-listing-word-count-sort="989" data-listing-title-sort="Deep Implicit Layers: Differentiable Convex Layer" data-listing-filename-sort="differetiable_convex_layer.qmd">
-<td>
-<span class="listing-date">Jun 11, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/differetiable_convex_layer.html" class="title listing-title">Deep Implicit Layers: Differentiable Convex Layer</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Auto Differentiation, Implicit Function, Paper Read, Optimization</span>
-</td>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Keep off</td>
 </tr>
-<tr data-index="1" data-categories="Learning Note,Auto Differentiation,Implicit Function" data-listing-date-sort="1718060400000" data-listing-file-modified-sort="1718143452685" data-listing-date-modified-sort="1718060400000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1748" data-listing-title-sort="Deep Implicit Layers: Fixed-Point Iteration" data-listing-filename-sort="deep_implicit_layers.qmd">
-<td>
-<span class="listing-date">Jun 11, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/deep_implicit_layers.html" class="title listing-title">Deep Implicit Layers: Fixed-Point Iteration</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Auto Differentiation, Implicit Function</span>
-</td>
+<tr class="even">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Start-up</td>
 </tr>
-<tr data-index="2" data-categories="Learning Note,Power System Operation" data-listing-date-sort="1717887600000" data-listing-file-modified-sort="1718356266894" data-listing-date-modified-sort="1717887600000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1041" data-listing-title-sort="Unit Commitment Problem and Economic Dispatch" data-listing-filename-sort="ncuc.qmd">
-<td>
-<span class="listing-date">Jun 9, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/ncuc.html" class="title listing-title">Unit Commitment Problem and Economic Dispatch</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Power System Operation</span>
-</td>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Shut-down</td>
 </tr>
-<tr data-index="3" data-categories="Learning Note,Power System Operation" data-listing-date-sort="1717887600000" data-listing-file-modified-sort="1718094010421" data-listing-date-modified-sort="1717887600000" data-listing-reading-time-sort="5" data-listing-word-count-sort="805" data-listing-title-sort="Power System Operation: AC and DC Power Flow Model" data-listing-filename-sort="power_system_operation.qmd">
-<td>
-<span class="listing-date">Jun 9, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/power_system_operation.html" class="title listing-title">Power System Operation: AC and DC Power Flow Model</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Power System Operation</span>
-</td>
-</tr>
-<tr data-index="4" data-categories="Learning Note,Auto Differentiation,Sensitivity Analysis,Implicit Function" data-listing-date-sort="1717542000000" data-listing-file-modified-sort="1718137543540" data-listing-date-modified-sort="1718137543000" data-listing-reading-time-sort="4" data-listing-word-count-sort="607" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations" data-listing-filename-sort="adjoint_nonlinear_equation.qmd">
-<td>
-<span class="listing-date">Jun 5, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Auto Differentiation, Sensitivity Analysis, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="5" data-categories="Learning Note,Auto Differentiation,Sensitivity Analysis,Implicit Function" data-listing-date-sort="1717369200000" data-listing-file-modified-sort="1717864314776" data-listing-date-modified-sort="1717455600000" data-listing-reading-time-sort="4" data-listing-word-count-sort="736" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Linear Equations" data-listing-filename-sort="adjoint_linear_equation.qmd">
-<td>
-<span class="listing-date">Jun 3, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_linear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Linear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Learning Note, Auto Differentiation, Sensitivity Analysis, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="6" data-categories="News" data-listing-date-sort="1717110000000" data-listing-file-modified-sort="1717864975515" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="21" data-listing-title-sort="Welcome To My Blog" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 31, 2024</span>
-</td>
-<td>
-<a href="./posts/news/index.html" class="title listing-title">Welcome To My Blog</a>
-</td>
-<td>
-<span class="listing-categories">News</span>
-</td>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Keep on</td>
 </tr>
 </tbody>
 </table>
-<div class="listing-no-matching d-none">
-No matching items
+<p>The ramp-up constraint is also modified where <span class="math inline">\(R_{gu}\)</span> is the ramp-up limit as the previous section and <span class="math inline">\(R_{gsu}\)</span> is the start-up ramp-up limit. The ramp-up status only has three states</p>
+<table class="caption-top table">
+<caption>The relationship between the on-off status and the start-up status</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(u_g(t-1)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(y_g(t)\)</span></th>
+<th style="text-align: center;">Explain</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Keep off</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Start-up</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Shut-down or Keep on</td>
+</tr>
+</tbody>
+</table>
+<p>The ramp-down constraint is also modified where <span class="math inline">\(R_{du}\)</span> is the ramp-down limit as the previous section and <span class="math inline">\(R_{gsd}\)</span> is the shut-down ramp-down limit.</p>
+<p>Similarly, the ramp-down constraint is modified where <span class="math inline">\(R_{du}\)</span> is the ramp-down limit as the previous section and <span class="math inline">\(R_{gsd}\)</span> is the shut-down ramp-down limit. The ramp-down status only has three states as well</p>
+<table class="caption-top table">
+<caption>The relationship between the on-off status and the shut-down status</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(u_g(t)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(z_g(t)\)</span></th>
+<th style="text-align: center;">Explain</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Keep off</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Shut down</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Keep on or Start up</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-</div></main> <!-- /main -->
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The initial conditions <span class="math inline">\(u_g(0), y_g(0), z_g(0), P_g(0)\)</span> need to be given.</p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

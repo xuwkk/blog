@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Wangkun Xu">
-<meta name="dcterms.date" content="2024-06-13">
+<meta name="dcterms.date" content="2024-06-14">
 
-<title>Wangkun's Blog – Unit Commitment Problem</title>
+<title>Wangkun's Blog – Economic Dispatch</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -78,35 +78,6 @@ gtag('js', new Date());
 gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -153,7 +124,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Unit Commitment Problem</h1>
+      <h1 class="title">Economic Dispatch</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Learning Note</div>
                 <div class="quarto-category">Power System Operation</div>
@@ -174,7 +145,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">June 13, 2024</p>
+        <p class="date">June 14, 2024</p>
       </div>
     </div>
     
@@ -199,190 +170,10 @@ window.Quarto = {
 
 
 
-<p>In the previous post <a href="posts/learning/power_system/power_system_operation.qmd">Power System Operation: AC and DC Power Flow Model</a>, we discuss how to model the power system in the steady-state for both AC and DC formats. In this post, unit commitment (UC) problem and econimic dispatch (ED) will be formulated. The UC problem is usually solved in day-ahead manner to decide the on/off conditions and the set-points of the generator. It includes 1). the simplest UC problem without binary variables, 2). the UC problem with binary variables. Both problem considers the network constraints and reserve requirements. The ED problem focuses more on ‘real-time’ balance of the load and generation and meet the physical constraints and safety requirements.</p>
-<p>Note that the UC and ED can be formulated in different ways, including stochastic, robust, and chance-constrained formats. In this post, we will focus on the deterministic formulation.</p>
-<p>The main reference is <a href="https://u.osu.edu/conejo.1/courses/power-system-operations/">Conejo’s lecture notes</a>.</p>
-<section id="unit-commitment-without-binary-variables" class="level2">
-<h2 class="anchored" data-anchor-id="unit-commitment-without-binary-variables">Unit Commitment Without Binary Variables</h2>
-<p>The UC without binary varibales can be formulated as linear programming (LP) problem as follows:</p>
-<p><span class="math display">\[
-\begin{aligned}
-\min_{P_g, \theta, P_{ls}, P_{sc}, P_{wc}} &amp; \sum_{t=1}^T c_{gv}^TP_g(t) + c_{ls}^TP_{ls}(t) + c_{sc}^TP_{sc}(t) + c_{wc}^TP_{wc}(t) \\
-\text{s.t.} &amp; P_g^{\text{min}} \leq P_g(t) \leq P_g^{\text{max}} \\
-&amp; -R_{\text{down}} \leq P_g(t) - P_g(t-1) \leq R_{\text{up}} \\
-&amp; -P_f^{\text{max}} \leq B_f\theta(t) + P_{f,\text{shift}} \leq P_f^{\text{max}} \\
-&amp; C_gP_g(t) + C_s(P_s(t) - P_{sc}(t)) + C_w(P_w(t) - P_{wc}(t)) - C_l(P_l(t) - P_{ls}(t)) \\
-&amp;  \qquad = B_{\text{bus}}\theta(t) + P_{\text{bus,shift}} \\
-&amp; \theta_{\text{ref}}(t) = \theta_0, \quad \forall t=1,2,\ldots,T \\
-&amp; \sum P_g^{\text{max}} \geq \sum_{i=1}^TP_g(t) + r(t) \\
-&amp; 0 \leq P_{ls}(t) \leq P_l(t), \quad \forall t=1,2,\ldots,T \\
-&amp; 0 \leq P_{sc}(t) \leq P_s(t), \quad \forall t=1,2,\ldots,T \\
-&amp; 0 \leq P_{wc}(t) \leq P_w(t), \quad \forall t=1,2,\ldots,T \\
-\end{aligned}
-\]</span></p>
-<p>The decision variables include</p>
-<ul>
-<li>Generator output <span class="math inline">\(P_g(t)\)</span></li>
-<li>Load shedding <span class="math inline">\(P_{ls}(t)\)</span></li>
-<li>Solar energy curtailment <span class="math inline">\(P_{sc}(t)\)</span></li>
-<li>Wind energy curtailment <span class="math inline">\(P_{wc}(t)\)</span></li>
-<li>Bus voltage angle <span class="math inline">\(\theta(t)\)</span></li>
-</ul>
-<p>All the decision variables are vectors and from <span class="math inline">\(t=1\)</span> to <span class="math inline">\(T\)</span>. The objective function is to minimize the total cost, which includes the generator cost, load shedding cost, solar curtailment cost, and wind curtailment cost. The constraints include the generator output limits, ramping limits, line flow limits, power balance, bus voltage angle reference, and reserve requirements. Meanwhile, the parameters include</p>
-<ul>
-<li>Load <span class="math inline">\(P_l(t)\)</span></li>
-<li>Solar generation <span class="math inline">\(P_s(t)\)</span></li>
-<li>Wind generation <span class="math inline">\(P_w(t)\)</span></li>
-<li>Reserve requirement <span class="math inline">\(r(t)\)</span> which are assumed to be known.</li>
-</ul>
-<p>The initial condition, e.g., <span class="math inline">\(P_g(0)\)</span> should also be given.</p>
-<p>The definition of the bus and branch admittance matrix <span class="math inline">\(B_{\text{bus}}\)</span> and <span class="math inline">\(B_f\)</span> are the same as the previous post <a href="posts/learning/power_system/power_system_operation.qmd">Power System Operation: AC and DC Power Flow Model</a>.</p>
-</section>
-<section id="unit-commitment-with-binary-variables" class="level2">
-<h2 class="anchored" data-anchor-id="unit-commitment-with-binary-variables">Unit Commitment With Binary Variables</h2>
-<p>The UC with binary variables can be formulated as mixed-integer linear programming (MILP) problem as follows. Apart from the decision variables in the previous section, the binary variables <span class="math inline">\(u(t)\)</span> are introduced to decide the on/off status of the generator.</p>
-<p>The optimization problem can be formulated as <span class="math display">\[
-\begin{aligned}
-\min_{u_g, y_g, z_g, P_g, \theta, P_{ls}, P_{sc}, P_{wc}} &amp; \quad \sum_{t=1}^T c_{gf}^Tu_g(t) + c_{gv}^TP_g(t) + c_{gsu}^Ty_g(t) + c_{gsd}^Tz_g(t) + c_{ls}^TP_{ls}(t) + c_{sc}^TP_{sc}(t) + c_{wc}^TP_{wc}(t) \\
-\text{s.t.} &amp; \quad y_g(t) - z_g(t) = u_g(t) - u_g(t-1) \\
-&amp; \quad y_g(t) + z_g(t) \leq 1 \\
-&amp; \quad u_g(t)\circ P_g^{\text{min}} \leq P_g(t) \leq u_g(t)\circ P_g^{\text{max}} \\
-&amp; \quad P_g(t) - P_g(t-1) \leq R_{gu}u_g(t-1) + R_{gsu} y_g(t)\\
-&amp; \quad P_g(t-1) - P_g(t) \leq R_{du}u_g(t) + R_{gsd} z_g(t)\\
-&amp; \quad -P_f^{\text{max}} \leq B_f\theta(t) + P_{f,\text{shift}} \leq P_f^{\text{max}} \\
-&amp; \quad C_gP_g(t) + C_s(P_s(t) - P_{sc}(t)) + C_w(P_w(t) - P_{wc}(t)) - C_l(P_l(t) - P_{ls}(t)) \\
-&amp; \quad  \qquad = B_{\text{bus}}\theta(t) + P_{\text{bus,shift}} \\
-&amp; \quad \theta_{\text{ref}}(t) = \theta_0, \quad \forall t=1,2,\ldots,T \\
-&amp; \quad \sum u_g(t) \circ P_g^{\text{max}} \geq \sum_{i=1}^TP_g(t) + r(t) \\
-&amp; \quad 0 \leq P_{ls}(t) \leq P_l(t), \quad \forall t=1,2,\ldots,T \\
-&amp; \quad 0 \leq P_{sc}(t) \leq P_s(t), \quad \forall t=1,2,\ldots,T \\
-&amp; \quad 0 \leq P_{wc}(t) \leq P_w(t), \quad \forall t=1,2,\ldots,T \\
-&amp; \quad u_g(t) \in \{0,1\}, \quad y_g(t) \in \{0,1\}, \quad z_g(t) \in \{0,1\}
-\end{aligned}
-\]</span> where <span class="math inline">\(\circ\)</span> denotes the element-wise product.</p>
-<p>Apart from the decision variables in the previous section, the following binary variables are introduced:</p>
-<ul>
-<li>Generator on/off status <span class="math inline">\(u(t)\)</span> with cost <span class="math inline">\(c_{gf}\)</span></li>
-<li>Generator start-up status <span class="math inline">\(y(t)\)</span> with cost <span class="math inline">\(c_{gsu}\)</span></li>
-<li>Generator shut-down status <span class="math inline">\(z(t)\)</span> with cost <span class="math inline">\(c_{gsd}\)</span></li>
-</ul>
-<p>The objective function is to minimize the total cost, which includes the generator fixed (on) cost, generator variable cost, generator start-up cost, generator shut-down cost, load shedding cost, solar curtailment cost, and wind curtailment cost.</p>
-<p>The first two constraints denote the relationship between the on-off status and the start-up and shut-down status, which can be formulated as the following table:</p>
-<table class="caption-top table">
-<caption>The relationship between the on-off status and the start-up and shut-down status</caption>
-<thead>
-<tr class="header">
-<th style="text-align: center;"><span class="math inline">\(u_g(t-1)\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(u_g(t)\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(y_g(t)\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(z_g(t)\)</span></th>
-<th style="text-align: center;">Explain</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Keep off</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Start-up</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">Shut-down</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Keep on</td>
-</tr>
-</tbody>
-</table>
-<p>The ramp-up constraint is also modified where <span class="math inline">\(R_{gu}\)</span> is the ramp-up limit as the previous section and <span class="math inline">\(R_{gsu}\)</span> is the start-up ramp-up limit. The ramp-up status only has three states</p>
-<table class="caption-top table">
-<caption>The relationship between the on-off status and the start-up status</caption>
-<thead>
-<tr class="header">
-<th style="text-align: center;"><span class="math inline">\(u_g(t-1)\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(y_g(t)\)</span></th>
-<th style="text-align: center;">Explain</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Keep off</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">Start-up</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Shut-down or Keep on</td>
-</tr>
-</tbody>
-</table>
-<p>The ramp-down constraint is also modified where <span class="math inline">\(R_{du}\)</span> is the ramp-down limit as the previous section and <span class="math inline">\(R_{gsd}\)</span> is the shut-down ramp-down limit.</p>
-<p>Similarly, the ramp-down constraint is modified where <span class="math inline">\(R_{du}\)</span> is the ramp-down limit as the previous section and <span class="math inline">\(R_{gsd}\)</span> is the shut-down ramp-down limit. The ramp-down status only has three states as well</p>
-<table class="caption-top table">
-<caption>The relationship between the on-off status and the shut-down status</caption>
-<thead>
-<tr class="header">
-<th style="text-align: center;"><span class="math inline">\(u_g(t)\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(z_g(t)\)</span></th>
-<th style="text-align: center;">Explain</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Keep off</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">Shut down</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">Keep on or Start up</td>
-</tr>
-</tbody>
-</table>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The initial conditions <span class="math inline">\(u_g(0), y_g(0), z_g(0), P_g(0)\)</span> need to be given.</p>
-</div>
-</div>
+<p>The economic dispatch problem is a fundamental optimization problem in power system operation. It aims to minimize the total generation cost while meeting the power demand and satisfying the operational constraints. This post provides an overview of the economic dispatch problem, its formulation, and solution methods. The main reference of this post is <a href="https://u.osu.edu/conejo.1/courses/power-system-operations/">Conejo’s lecture notes</a>. Apart from the basic setting, the on-off and set-point conditions of the unit-commitment problem is also passes through to the ED formulation.</p>
+<p>This post is also a supplement to the github repository <a href="https://github.com/xuwkk/power_system_operation">PowerSystemOperation</a></p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

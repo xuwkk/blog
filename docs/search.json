@@ -18,7 +18,7 @@
     "href": "index.html",
     "title": "Content",
     "section": "",
-    "text": "Date\n\n\nTitle\n\n\nCategories\n\n\n\n\n\n\nJun 18, 2024\n\n\nTangent and Adjoint Sensitivity Analysis of Linear Equations\n\n\nAuto Differentiation, Implicit Function, NeuralODE\n\n\n\n\nJun 14, 2024\n\n\nEconomic Dispatch\n\n\nPower System Operation\n\n\n\n\nJun 13, 2024\n\n\nUnit Commitment Problem\n\n\nPower System Operation\n\n\n\n\nJun 11, 2024\n\n\nDeep Implicit Layers: Differentiable Convex Layer\n\n\nAuto Differentiation, Implicit Function, Paper Read, Optimization\n\n\n\n\nJun 11, 2024\n\n\nDeep Implicit Layers: Fixed-Point Iteration\n\n\nAuto Differentiation, Implicit Function\n\n\n\n\nJun 9, 2024\n\n\nPower System Operation: AC and DC Power Flow Model\n\n\nPower System Operation\n\n\n\n\nJun 5, 2024\n\n\nTangent and Adjoint Sensitivity Analysis of Nonlinear Equations\n\n\nAuto Differentiation, Implicit Function\n\n\n\n\nJun 3, 2024\n\n\nTangent and Adjoint Sensitivity Analysis of Linear Equations\n\n\nAuto Differentiation, Implicit Function\n\n\n\n\nMay 31, 2024\n\n\nWelcome To My Blog\n\n\nNews\n\n\n\n\n\nNo matching items"
+    "text": "Date\n\n\nTitle\n\n\nCategories\n\n\n\n\n\n\nJun 18, 2024\n\n\nTangent Sensitivity Analysis of ODEs\n\n\nAuto Differentiation, Implicit Function, NeuralODE\n\n\n\n\nJun 14, 2024\n\n\nEconomic Dispatch\n\n\nPower System Operation\n\n\n\n\nJun 13, 2024\n\n\nUnit Commitment Problem\n\n\nPower System Operation\n\n\n\n\nJun 11, 2024\n\n\nDeep Implicit Layers: Differentiable Convex Layer\n\n\nAuto Differentiation, Implicit Function, Paper Read, Optimization\n\n\n\n\nJun 11, 2024\n\n\nDeep Implicit Layers: Fixed-Point Iteration\n\n\nAuto Differentiation, Implicit Function\n\n\n\n\nJun 9, 2024\n\n\nPower System Operation: AC and DC Power Flow Model\n\n\nPower System Operation\n\n\n\n\nJun 5, 2024\n\n\nTangent and Adjoint Sensitivity Analysis of Nonlinear Equations\n\n\nAuto Differentiation, Implicit Function\n\n\n\n\nJun 3, 2024\n\n\nTangent and Adjoint Sensitivity Analysis of Linear Equations\n\n\nAuto Differentiation, Implicit Function\n\n\n\n\nMay 31, 2024\n\n\nWelcome To My Blog\n\n\nNews\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/learning/autometic_differentiation/adjoint_linear_equation.html",
@@ -212,42 +212,42 @@
   {
     "objectID": "posts/learning/autometic_differentiation/forward_mode_ode.html",
     "href": "posts/learning/autometic_differentiation/forward_mode_ode.html",
-    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations",
+    "title": "Tangent Sensitivity Analysis of ODEs",
     "section": "",
     "text": "This post summarizes my learning note on the forward-mode (or tangent method) for sensitivity analysis of ordinary differential equations (ODEs). Similar to the previous posts on tangent method for linear and nonlinear equations, it can be extended for finding the sensitivity of the solution of ODEs or the gradient through the NeuralODE with repsect to the initial condition or the parameters. This post is based on the YouTube video: Neural ODEs - Pushforward/Jvp rule.\nConsider the nonlinear ODE: \\[\n\\frac{du}{dt} = f(u, \\theta)\n\\] which is evaluated at \\(t=T\\) with initial condition \\(u(t=0)=u_0\\) as \\[\nq(\\theta,u_0,T) = u(T)\n\\] where \\(\\theta\\in\\mathbb{R}^P\\) is the parameter; \\(u_0\\in\\mathbb{R}^N\\) is the initial condition; \\(T\\) is the final time; and \\(u(T)\\in\\mathbb{R}^N\\) is the final state. The ODE can be solved by any ODE solver, such as the Euler method or Runge-Kutta method.\nOur task is to forward-propagate the tangent information (a vector) on the inpus \\(\\dot{\\theta}\\in\\mathbb{R}^P, \\dot{u}_0\\in\\mathbb{R}^{N}, T\\in\\mathbb{R}\\) to the output \\(\\dot{u}(T)\\in\\mathbb{R}^N\\) without unrolling the solver and applying forward-mode AD to its operation.\nIn general, the forward-mode AD can be found the Jacobian-vector product on the total derivative of the output: \\[\n\\dot{u}(T) = \\underbrace{\\frac{\\partial q}{\\partial \\theta}\\dot{\\theta}}_{\\dot{u}(T)_\\theta} + \\underbrace{\\frac{\\partial q}{\\partial u_0}\\dot{u}_0}_{\\dot{u}(T)_{u_0}} + \\underbrace{\\frac{\\partial q}{\\partial T}\\dot{T}}_{\\dot{u}(T)_T}\n\\]\nWe can find the tangent information item by item."
   },
   {
     "objectID": "posts/learning/autometic_differentiation/forward_mode_ode.html#tangent-condition-from-parameter-theta",
     "href": "posts/learning/autometic_differentiation/forward_mode_ode.html#tangent-condition-from-parameter-theta",
-    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations",
+    "title": "Tangent Sensitivity Analysis of ODEs",
     "section": "Tangent Condition from parameter \\(\\theta\\)",
     "text": "Tangent Condition from parameter \\(\\theta\\)\nFrom \\[\nu(T) = u_0 + \\int_0^T f(u(t), \\theta) dt\n\\] take the total derivative with respect to \\(\\theta\\): \\[\n\\frac{d}{d\\theta}u(T) = \\frac{d}{d\\theta}u_0 + \\int_0^T \\frac{\\partial f}{\\partial u}\\frac{d}{d\\theta}u(t) + \\frac{\\partial f}{\\partial \\theta} dt\n\\]\nMultiply both sides by \\(\\dot{\\theta}\\): \\[\n\\underbrace{\\frac{d}{d\\theta}u(T) \\cdot \\dot{\\theta}}_{\\dot{u}(T)_\\theta} = \\underbrace{\\frac{d}{d\\theta}u_0 \\cdot \\dot{\\theta}}_{=0} + \\int_0^T \\frac{\\partial f}{\\partial u}\\underbrace{\\frac{d}{d\\theta}u(t) \\cdot \\dot{\\theta}}_{\\dot{u}(t)_\\theta} + \\frac{\\partial f}{\\partial \\theta} \\cdot \\dot{\\theta} dt\n\\]\n\n\n\n\n\n\nNote\n\n\n\nIt is assumed that the initial condition \\(u_0\\) is not dependent on \\(\\theta\\). However, this may not be true for example when the event is considered.\n\n\nThe above relationship is the solution of the following ODE on state \\(\\dot{u}(t)_\\theta\\): \\[\n\\begin{aligned}\n\\frac{d}{dt}\\dot{u}(t)_\\theta &= \\frac{\\partial f}{\\partial u}\\dot{u}(t)_\\theta + \\frac{\\partial f}{\\partial \\theta}\\dot{\\theta} \\\\\n\\dot{u}(t=0)_\\theta &= 0\n\\end{aligned}\n\\tag{1}\\]\nBy solving the tangent ODE using any ODE solver, we can find the tangent information \\(\\dot{u}(t)_\\theta\\). Note that this ODE is linear and inhomogeneous, although the original ODE can be nonlinear."
   },
   {
     "objectID": "posts/learning/autometic_differentiation/forward_mode_ode.html#tangent-condition-from-initial-condition-u_0",
     "href": "posts/learning/autometic_differentiation/forward_mode_ode.html#tangent-condition-from-initial-condition-u_0",
-    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations",
+    "title": "Tangent Sensitivity Analysis of ODEs",
     "section": "Tangent Condition from initial condition \\(u_0\\)",
     "text": "Tangent Condition from initial condition \\(u_0\\)\nFind the total derivative of \\(u(T)\\) with respect to \\(u_0\\) on both sides of Equation 1: \\[\n\\frac{d}{du_0}u(T) = \\frac{\\partial u_0}{\\partial u_0} + \\int_0^T \\frac{\\partial f}{\\partial u}\\frac{d}{du_0}u(t) dt\n\\]\nMultiply both sides by \\(\\dot{u}_0\\): \\[\n\\underbrace{\\frac{d}{du_0}u(T) \\cdot \\dot{u}_0}_{\\dot{u}(T)_{u_0}} = \\underbrace{\\frac{\\partial u_0}{\\partial u_0} \\cdot \\dot{u}_0}_{=\\dot{u}_0} + \\int_0^T \\frac{\\partial f}{\\partial u}\\underbrace{\\frac{d}{du_0}u(t) \\cdot \\dot{u}_0}_{\\dot{u}(t)_{u_0}} dt\n\\] which is again as the solution of the following ODE on state \\(\\dot{u}(t)_{u_0}\\): \\[\n\\begin{aligned}\n\\frac{d}{dt}\\dot{u}(t)_{u_0} &= \\frac{\\partial f}{\\partial u}\\dot{u}(t)_{u_0} \\\\\n\\dot{u}(t=0)_{u_0} &= \\dot{u}_0\n\\end{aligned}\n\\] which is a linear and homogeneous ODE."
   },
   {
     "objectID": "posts/learning/autometic_differentiation/forward_mode_ode.html#computation",
     "href": "posts/learning/autometic_differentiation/forward_mode_ode.html#computation",
-    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations",
+    "title": "Tangent Sensitivity Analysis of ODEs",
     "section": "Computation",
     "text": "Computation\nNote that \\(\\dot{\\theta}, \\dot{u}_0, \\dot{T}\\) are known vectors. Meanwhile, the Jacobian \\(\\frac{\\partial f}{\\partial u}\\) and \\(\\frac{\\partial f}{\\partial \\theta}\\) can be found by analytical derivation or automatic differentiation. In most of the cases, the Jacobians do not need to be computed or stored explicitly. Instead, the Jacobian-vector product (JVP) can be computed by the forward-mode AD, e.g. by torch.autograd.forward_ad in PyTorch.\nBecause \\(\\frac{\\partial f}{\\partial u}\\) and \\(\\frac{\\partial f}{\\partial \\theta}\\) are functions of \\(u(t)\\), its value is dependent on the solution of the primal ODE. One method is to store the solution of the primal ODE. However, a more compact method is to simutaneously solve the primal ODE and the tangent ODEs. For example, \\[\n\\begin{aligned}\n\\frac{du}{dt} &= f(u, \\theta) \\\\\n\\frac{d}{dt}\\dot{u}(t)_{u_0} &= \\frac{\\partial f}{\\partial u}\\dot{u}(t)_{u_0} \\\\\n\\frac{d}{dt}\\dot{u}(t)_\\theta &= \\frac{\\partial f}{\\partial u}\\dot{u}(t)_\\theta + \\frac{\\partial f}{\\partial \\theta}\\dot{\\theta}\n\\end{aligned}\n\\] where the initial conditions are \\(u(t=0)=u_0\\), \\(\\dot{u}(t=0)_{u_0}=\\dot{u}_0\\) and \\(\\dot{u}(t=0)_\\theta=0\\). The ODEs can be solved by any ODE solver, such as the Euler method or Runge-Kutta method.\nThe tangent method can also be used to find the Jacobian of the output with respect to the parameter \\(\\theta\\) by setting the tangent vector \\(\\dot{\\theta}\\) to be the unit vectors. Not suprisingly, the \\(P\\) number of ODEs need to be solved to find the Jacobian \\(\\frac{d u(t)}{d \\theta}\\)."
   },
   {
     "objectID": "posts/learning/autometic_differentiation/forward_mode_ode.html#tangent-condition-from-final-time-t",
     "href": "posts/learning/autometic_differentiation/forward_mode_ode.html#tangent-condition-from-final-time-t",
-    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations",
+    "title": "Tangent Sensitivity Analysis of ODEs",
     "section": "Tangent Condition from final time \\(T\\)",
     "text": "Tangent Condition from final time \\(T\\)\nFind the total derivative of \\(u(T)\\) with respect to \\(T\\) on both sides of Equation 1: \\[\n\\frac{d}{dT}u(T) = \\frac{d}{dT}u_0 + f(u(T), \\theta)\n\\] Note that we have \\(\\frac{d}{dT}\\int_0^T f(u(t), \\theta) dt = f(u(T), \\theta)\\).\nMultiply both sides by \\(\\dot{T}\\): \\[\n\\underbrace{\\frac{d}{dT}u(T) \\cdot \\dot{T}}_{\\dot{u}(T)_T} = \\underbrace{\\frac{d}{dT}u_0 \\cdot \\dot{T}}_{=0} + f(u(T), \\theta) \\cdot \\dot{T}\n\\] which is an algebraic equation (only for the final time)."
   },
   {
     "objectID": "posts/learning/autometic_differentiation/forward_mode_ode.html#pytorch-implementation",
     "href": "posts/learning/autometic_differentiation/forward_mode_ode.html#pytorch-implementation",
-    "title": "Tangent and Adjoint Sensitivity Analysis of Linear Equations",
+    "title": "Tangent Sensitivity Analysis of ODEs",
     "section": "Pytorch Implementation",
     "text": "Pytorch Implementation\nAn example code snippet can be found at my-github including a parallel batched implementation."
   }

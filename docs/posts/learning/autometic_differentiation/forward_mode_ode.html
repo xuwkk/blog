@@ -201,9 +201,9 @@ window.Quarto = {
 
 
 <p>This post summarizes my learning note on the forward-mode (or tangent method) for sensitivity analysis of ordinary differential equations (ODEs). Similar to the previous posts on tangent method for <a href="posts/learning/autometic_differentiation/adjoint_linear_equation.qmd">linear</a> and <a href="posts/learning/autometic_differentiation/adjoint_nonlinear_equation.qmd">nonlinear</a> equations, it can be extended for finding the sensitivity of the solution of ODEs or the gradient through the NeuralODE with repsect to the initial condition or the parameters. This post is based on the <a href="https://www.youtube.com/watch?v=69KlO-kbxJ8">YouTube video: Neural ODEs - Pushforward/Jvp rule</a>.</p>
-<p>Consider the nonlinear ODE: <span class="math display">\[
+<p>Consider the nonlinear ODE: <span id="eq-ode"><span class="math display">\[
 \frac{du}{dt} = f(u, \theta)
-\]</span> which is evaluated at <span class="math inline">\(t=T\)</span> with initial condition <span class="math inline">\(u(t=0)=u_0\)</span> as <span class="math display">\[
+\tag{1}\]</span></span> which is evaluated at <span class="math inline">\(t=T\)</span> with initial condition <span class="math inline">\(u(t=0)=u_0\)</span> as <span class="math display">\[
 q(\theta,u_0,T) = u(T)
 \]</span> where <span class="math inline">\(\theta\in\mathbb{R}^P\)</span> is the parameter; <span class="math inline">\(u_0\in\mathbb{R}^N\)</span> is the initial condition; <span class="math inline">\(T\)</span> is the final time; and <span class="math inline">\(u(T)\in\mathbb{R}^N\)</span> is the final state. The ODE can be solved by <strong>any</strong> ODE solver, such as the Euler method or Runge-Kutta method.</p>
 <p>Our task is to forward-propagate the tangent information (a vector) on the inpus <span class="math inline">\(\dot{\theta}\in\mathbb{R}^P, \dot{u}_0\in\mathbb{R}^{N}, T\in\mathbb{R}\)</span> to the output <span class="math inline">\(\dot{u}(T)\in\mathbb{R}^N\)</span> without unrolling the solver and applying forward-mode AD to its operation.</p>
@@ -239,12 +239,34 @@ Note
 \frac{d}{dt}\dot{u}(t)_\theta &amp;= \frac{\partial f}{\partial u}\dot{u}(t)_\theta + \frac{\partial f}{\partial \theta}\dot{\theta} \\
 \dot{u}(t=0)_\theta &amp;= 0
 \end{aligned}
-\tag{1}\]</span></span></p>
+\tag{2}\]</span></span></p>
 <p>By solving the tangent ODE using <strong>any</strong> ODE solver, we can find the tangent information <span class="math inline">\(\dot{u}(t)_\theta\)</span>. Note that this ODE is linear and inhomogeneous, although the original ODE can be nonlinear.</p>
+<section id="alternative-derivation" class="level3">
+<h3 class="anchored" data-anchor-id="alternative-derivation">Alternative Derivation</h3>
+<p>In this section, we derive the tangent condition from the perspective of automatic differentiation in deep learning. The sensitivity derived can be used for optimization, local sensitivity analysis, dynamic/control, or neural ODE.</p>
+<p>Consider there is a cost function <span class="math inline">\(J(u,\theta)\)</span> associated with the state <span class="math inline">\(u(t)\)</span>: <span class="math display">\[
+J(u,\theta) = \int_0^Tg(u(t), \theta)dt
+\]</span></p>
+<p>For instance, we can set a quadratic loss as <span class="math inline">\(g(u(t), \theta) = u(t)^TQu(t)\)</span>. Cost on finite time instance is also possible.</p>
+<p>The total derivative of the cost function with respect to <span class="math inline">\(\theta\)</span> is: <span class="math display">\[
+\frac{dJ}{d\theta} = \int_0^T \frac{d}{d\theta} g(u,\theta)dt = \int_0^T \frac{\partial g}{\partial \theta} + \frac{\partial g}{\partial u}\frac{d u}{d\theta} dt \in \mathbb{R}^{1\times P}
+\]</span> which is a row vector.</p>
+<p>The only term that is difficult to solve is <span class="math inline">\(\frac{d u}{d\theta}\in\mathbb{R}^{N\times P}\)</span>, e.g., <span class="math inline">\(\frac{du}{d\theta} = [\frac{du}{d\theta_1}, \cdots. \frac{du}{d\theta_P}]\)</span> and each <span class="math inline">\(\frac{du}{d\theta_i}\in\mathbb{R}^N\)</span>.</p>
+<p>Then do total derivative on <a href="#eq-ode" class="quarto-xref">Equation&nbsp;1</a>: <span class="math display">\[
+\frac{d}{d\theta} \frac{du}{dt} = \frac{d}{dt} \frac{du}{d\theta} = \frac{d}{d\theta} f(u, \theta) = \frac{\partial f}{\partial u}\frac{du}{d\theta} + \frac{\partial f}{\partial \theta}
+\]</span></p>
+<p>Therefore, there is <span class="math inline">\(P\)</span> linear ODEs to solve for <span class="math inline">\(\frac{du}{d\theta}\)</span>: <span class="math display">\[
+\begin{aligned}
+\frac{d}{dt}\frac{du}{d\theta_i} &amp;= \frac{\partial f}{\partial u}\frac{du}{d\theta_i} + \frac{\partial f}{\partial \theta_i} \\
+\frac{du}{d\theta_i}(t=0) &amp;= 0
+\end{aligned}
+\]</span></p>
+<p>Once we have <span class="math inline">\(\frac{du}{d\theta}\)</span>, we can find the gradient of the cost function with respect to <span class="math inline">\(\theta\)</span> by plugging it into the total derivative of the cost function.</p>
+</section>
 </section>
 <section id="tangent-condition-from-initial-condition-u_0" class="level2">
 <h2 class="anchored" data-anchor-id="tangent-condition-from-initial-condition-u_0">Tangent Condition from initial condition <span class="math inline">\(u_0\)</span></h2>
-<p>Find the total derivative of <span class="math inline">\(u(T)\)</span> with respect to <span class="math inline">\(u_0\)</span> on both sides of <a href="#eq-solution" class="quarto-xref">Equation&nbsp;1</a>: <span class="math display">\[
+<p>Find the total derivative of <span class="math inline">\(u(T)\)</span> with respect to <span class="math inline">\(u_0\)</span> on both sides of <a href="#eq-solution" class="quarto-xref">Equation&nbsp;2</a>: <span class="math display">\[
 \frac{d}{du_0}u(T) = \frac{\partial u_0}{\partial u_0} + \int_0^T \frac{\partial f}{\partial u}\frac{d}{du_0}u(t) dt
 \]</span></p>
 <p>Multiply both sides by <span class="math inline">\(\dot{u}_0\)</span>: <span class="math display">\[
@@ -258,7 +280,7 @@ Note
 </section>
 <section id="tangent-condition-from-final-time-t" class="level2">
 <h2 class="anchored" data-anchor-id="tangent-condition-from-final-time-t">Tangent Condition from final time <span class="math inline">\(T\)</span></h2>
-<p>Find the total derivative of <span class="math inline">\(u(T)\)</span> with respect to <span class="math inline">\(T\)</span> on both sides of <a href="#eq-solution" class="quarto-xref">Equation&nbsp;1</a>: <span class="math display">\[
+<p>Find the total derivative of <span class="math inline">\(u(T)\)</span> with respect to <span class="math inline">\(T\)</span> on both sides of <a href="#eq-solution" class="quarto-xref">Equation&nbsp;2</a>: <span class="math display">\[
 \frac{d}{dT}u(T) = \frac{d}{dT}u_0 + f(u(T), \theta)
 \]</span> Note that we have <span class="math inline">\(\frac{d}{dT}\int_0^T f(u(t), \theta) dt = f(u(T), \theta)\)</span>.</p>
 <p>Multiply both sides by <span class="math inline">\(\dot{T}\)</span>: <span class="math display">\[
@@ -268,7 +290,7 @@ Note
 <section id="computation" class="level2">
 <h2 class="anchored" data-anchor-id="computation">Computation</h2>
 <p>Note that <span class="math inline">\(\dot{\theta}, \dot{u}_0, \dot{T}\)</span> are known vectors. Meanwhile, the Jacobian <span class="math inline">\(\frac{\partial f}{\partial u}\)</span> and <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span> can be found by analytical derivation or automatic differentiation. In most of the cases, the Jacobians do not need to be computed or stored explicitly. Instead, the Jacobian-vector product (JVP) can be computed by the forward-mode AD, e.g.&nbsp;by <code>torch.autograd.forward_ad</code> in PyTorch.</p>
-<p>Because <span class="math inline">\(\frac{\partial f}{\partial u}\)</span> and <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span> are functions of <span class="math inline">\(u(t)\)</span>, its value is dependent on the solution of the primal ODE. One method is to store the solution of the primal ODE. However, a more compact method is to simutaneously solve the primal ODE and the tangent ODEs. For example, <span class="math display">\[
+<p>Because <span class="math inline">\(\frac{\partial f}{\partial u}\)</span> and <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span> are functions of <span class="math inline">\(u(t)\)</span>, its value is dependent on the solution of the primal ODE. One method is to store the solution of the primal ODE. However, a more compact method is to simutaneously solve the primal ODE and the tangent ODEs. For example, the augmented ODE system is: <span class="math display">\[
 \begin{aligned}
 \frac{du}{dt} &amp;= f(u, \theta) \\
 \frac{d}{dt}\dot{u}(t)_{u_0} &amp;= \frac{\partial f}{\partial u}\dot{u}(t)_{u_0} \\

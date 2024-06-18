@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Wangkun Xu">
-<meta name="dcterms.date" content="2024-06-14">
+<meta name="dcterms.date" content="2024-06-18">
 
-<title>Wangkun's Blog – Economic Dispatch</title>
+<title>Wangkun's Blog – Tangent and Adjoint Sensitivity Analysis of Linear Equations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -78,6 +78,35 @@ gtag('js', new Date());
 gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -124,9 +153,11 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Economic Dispatch</h1>
+      <h1 class="title">Tangent and Adjoint Sensitivity Analysis of Linear Equations</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Power System Operation</div>
+                <div class="quarto-category">Auto Differentiation</div>
+                <div class="quarto-category">Implicit Function</div>
+                <div class="quarto-category">NeuralODE</div>
               </div>
                   </div>
   </div>
@@ -144,14 +175,14 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">June 14, 2024</p>
+        <p class="date">June 18, 2024</p>
       </div>
     </div>
     
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">June 15, 2024</p>
+        <p class="date-modified">June 18, 2024</p>
       </div>
     </div>
       
@@ -169,10 +200,89 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 
 
 
-<p>The economic dispatch problem is a fundamental optimization problem in power system operation. It aims to minimize the total generation cost while meeting the power demand and satisfying the operational constraints. This post provides an overview of the economic dispatch problem, its formulation, and solution methods. The main reference of this post is <a href="https://u.osu.edu/conejo.1/courses/power-system-operations/">Conejo’s lecture notes</a>. Apart from the basic setting, the on-off and set-point conditions of the unit-commitment problem is also passes through to the ED formulation.</p>
-<p>This post is also a supplement to the github repository <a href="https://github.com/xuwkk/power_system_operation">PowerSystemOperation</a></p>
+<p>This post summarizes my learning note on the forward-mode (or tangent method) for sensitivity analysis of ordinary differential equations (ODEs). Similar to the previous posts on tangent method for <a href="posts/learning/autometic_differentiation/adjoint_linear_equation.qmd">linear</a> and <a href="posts/learning/autometic_differentiation/adjoint_nonlinear_equation.qmd">nonlinear</a> equations, it can be extended for finding the sensitivity of the solution of ODEs or the gradient through the NeuralODE with repsect to the initial condition or the parameters. This post is based on the <a href="https://www.youtube.com/watch?v=69KlO-kbxJ8">YouTube video: Neural ODEs - Pushforward/Jvp rule</a>.</p>
+<p>Consider the nonlinear ODE: <span class="math display">\[
+\frac{du}{dt} = f(u, \theta)
+\]</span> which is evaluated at <span class="math inline">\(t=T\)</span> with initial condition <span class="math inline">\(u(t=0)=u_0\)</span> as <span class="math display">\[
+q(\theta,u_0,T) = u(T)
+\]</span> where <span class="math inline">\(\theta\in\mathbb{R}^P\)</span> is the parameter; <span class="math inline">\(u_0\in\mathbb{R}^N\)</span> is the initial condition; <span class="math inline">\(T\)</span> is the final time; and <span class="math inline">\(u(T)\in\mathbb{R}^N\)</span> is the final state. The ODE can be solved by <strong>any</strong> ODE solver, such as the Euler method or Runge-Kutta method.</p>
+<p>Our task is to forward-propagate the tangent information (a vector) on the inpus <span class="math inline">\(\dot{\theta}\in\mathbb{R}^P, \dot{u}_0\in\mathbb{R}^{N}, T\in\mathbb{R}\)</span> to the output <span class="math inline">\(\dot{u}(T)\in\mathbb{R}^N\)</span> without unrolling the solver and applying forward-mode AD to its operation.</p>
+<p>In general, the forward-mode AD can be found the Jacobian-vector product on the total derivative of the output: <span class="math display">\[
+\dot{u}(T) = \underbrace{\frac{\partial q}{\partial \theta}\dot{\theta}}_{\dot{u}(T)_\theta} + \underbrace{\frac{\partial q}{\partial u_0}\dot{u}_0}_{\dot{u}(T)_{u_0}} + \underbrace{\frac{\partial q}{\partial T}\dot{T}}_{\dot{u}(T)_T}
+\]</span></p>
+<p>We can find the tangent information item by item.</p>
+<section id="tangent-condition-from-parameter-theta" class="level2">
+<h2 class="anchored" data-anchor-id="tangent-condition-from-parameter-theta">Tangent Condition from parameter <span class="math inline">\(\theta\)</span></h2>
+<p>From <span class="math display">\[
+u(T) = u_0 + \int_0^T f(u(t), \theta) dt
+\]</span> take the total derivative with respect to <span class="math inline">\(\theta\)</span>: <span class="math display">\[
+\frac{d}{d\theta}u(T) = \frac{d}{d\theta}u_0 + \int_0^T \frac{\partial f}{\partial u}\frac{d}{d\theta}u(t) + \frac{\partial f}{\partial \theta} dt
+\]</span></p>
+<p>Multiply both sides by <span class="math inline">\(\dot{\theta}\)</span>: <span class="math display">\[
+\underbrace{\frac{d}{d\theta}u(T) \cdot \dot{\theta}}_{\dot{u}(T)_\theta} = \underbrace{\frac{d}{d\theta}u_0 \cdot \dot{\theta}}_{=0} + \int_0^T \frac{\partial f}{\partial u}\underbrace{\frac{d}{d\theta}u(t) \cdot \dot{\theta}}_{\dot{u}(t)_\theta} + \frac{\partial f}{\partial \theta} \cdot \dot{\theta} dt
+\]</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is assumed that the initial condition <span class="math inline">\(u_0\)</span> is not dependent on <span class="math inline">\(\theta\)</span>. However, this may not be true for example when the event is considered.</p>
+</div>
+</div>
+<p>The above relationship is the solution of the following ODE on state <span class="math inline">\(\dot{u}(t)_\theta\)</span>: <span id="eq-solution"><span class="math display">\[
+\begin{aligned}
+\frac{d}{dt}\dot{u}(t)_\theta &amp;= \frac{\partial f}{\partial u}\dot{u}(t)_\theta + \frac{\partial f}{\partial \theta}\dot{\theta} \\
+\dot{u}(t=0)_\theta &amp;= 0
+\end{aligned}
+\tag{1}\]</span></span></p>
+<p>By solving the tangent ODE using <strong>any</strong> ODE solver, we can find the tangent information <span class="math inline">\(\dot{u}(t)_\theta\)</span>. Note that this ODE is linear and inhomogeneous, although the original ODE can be nonlinear.</p>
+</section>
+<section id="tangent-condition-from-initial-condition-u_0" class="level2">
+<h2 class="anchored" data-anchor-id="tangent-condition-from-initial-condition-u_0">Tangent Condition from initial condition <span class="math inline">\(u_0\)</span></h2>
+<p>Find the total derivative of <span class="math inline">\(u(T)\)</span> with respect to <span class="math inline">\(u_0\)</span> on both sides of <a href="#eq-solution" class="quarto-xref">Equation&nbsp;1</a>: <span class="math display">\[
+\frac{d}{du_0}u(T) = \frac{\partial u_0}{\partial u_0} + \int_0^T \frac{\partial f}{\partial u}\frac{d}{du_0}u(t) dt
+\]</span></p>
+<p>Multiply both sides by <span class="math inline">\(\dot{u}_0\)</span>: <span class="math display">\[
+\underbrace{\frac{d}{du_0}u(T) \cdot \dot{u}_0}_{\dot{u}(T)_{u_0}} = \underbrace{\frac{\partial u_0}{\partial u_0} \cdot \dot{u}_0}_{=\dot{u}_0} + \int_0^T \frac{\partial f}{\partial u}\underbrace{\frac{d}{du_0}u(t) \cdot \dot{u}_0}_{\dot{u}(t)_{u_0}} dt
+\]</span> which is again as the solution of the following ODE on state <span class="math inline">\(\dot{u}(t)_{u_0}\)</span>: <span class="math display">\[
+\begin{aligned}
+\frac{d}{dt}\dot{u}(t)_{u_0} &amp;= \frac{\partial f}{\partial u}\dot{u}(t)_{u_0} \\
+\dot{u}(t=0)_{u_0} &amp;= \dot{u}_0
+\end{aligned}
+\]</span> which is a linear and homogeneous ODE.</p>
+</section>
+<section id="tangent-condition-from-final-time-t" class="level2">
+<h2 class="anchored" data-anchor-id="tangent-condition-from-final-time-t">Tangent Condition from final time <span class="math inline">\(T\)</span></h2>
+<p>Find the total derivative of <span class="math inline">\(u(T)\)</span> with respect to <span class="math inline">\(T\)</span> on both sides of <a href="#eq-solution" class="quarto-xref">Equation&nbsp;1</a>: <span class="math display">\[
+\frac{d}{dT}u(T) = \frac{d}{dT}u_0 + f(u(T), \theta)
+\]</span> Note that we have <span class="math inline">\(\frac{d}{dT}\int_0^T f(u(t), \theta) dt = f(u(T), \theta)\)</span>.</p>
+<p>Multiply both sides by <span class="math inline">\(\dot{T}\)</span>: <span class="math display">\[
+\underbrace{\frac{d}{dT}u(T) \cdot \dot{T}}_{\dot{u}(T)_T} = \underbrace{\frac{d}{dT}u_0 \cdot \dot{T}}_{=0} + f(u(T), \theta) \cdot \dot{T}
+\]</span> which is an algebraic equation (only for the final time).</p>
+</section>
+<section id="computation" class="level2">
+<h2 class="anchored" data-anchor-id="computation">Computation</h2>
+<p>Note that <span class="math inline">\(\dot{\theta}, \dot{u}_0, \dot{T}\)</span> are known vectors. Meanwhile, the Jacobian <span class="math inline">\(\frac{\partial f}{\partial u}\)</span> and <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span> can be found by analytical derivation or automatic differentiation. In most of the cases, the Jacobians do not need to be computed or stored explicitly. Instead, the Jacobian-vector product (JVP) can be computed by the forward-mode AD, e.g.&nbsp;by <code>torch.autograd.forward_ad</code> in PyTorch.</p>
+<p>Because <span class="math inline">\(\frac{\partial f}{\partial u}\)</span> and <span class="math inline">\(\frac{\partial f}{\partial \theta}\)</span> are functions of <span class="math inline">\(u(t)\)</span>, its value is dependent on the solution of the primal ODE. One method is to store the solution of the primal ODE. However, a more compact method is to simutaneously solve the primal ODE and the tangent ODEs. For example, <span class="math display">\[
+\begin{aligned}
+\frac{du}{dt} &amp;= f(u, \theta) \\
+\frac{d}{dt}\dot{u}(t)_{u_0} &amp;= \frac{\partial f}{\partial u}\dot{u}(t)_{u_0} \\
+\frac{d}{dt}\dot{u}(t)_\theta &amp;= \frac{\partial f}{\partial u}\dot{u}(t)_\theta + \frac{\partial f}{\partial \theta}\dot{\theta}
+\end{aligned}
+\]</span> where the initial conditions are <span class="math inline">\(u(t=0)=u_0\)</span>, <span class="math inline">\(\dot{u}(t=0)_{u_0}=\dot{u}_0\)</span> and <span class="math inline">\(\dot{u}(t=0)_\theta=0\)</span>. The ODEs can be solved by any ODE solver, such as the Euler method or Runge-Kutta method.</p>
+<p>The tangent method can also be used to find the Jacobian of the output with respect to the parameter <span class="math inline">\(\theta\)</span> by setting the tangent vector <span class="math inline">\(\dot{\theta}\)</span> to be the unit vectors. Not suprisingly, the <span class="math inline">\(P\)</span> number of ODEs need to be solved to find the Jacobian <span class="math inline">\(\frac{d u(t)}{d \theta}\)</span>.</p>
+</section>
+<section id="pytorch-implementation" class="level2">
+<h2 class="anchored" data-anchor-id="pytorch-implementation">Pytorch Implementation</h2>
+<p>An example code snippet can be found at <a href="https://github.com/xuwkk/blog_code">my-github</a> including a parallel batched implementation.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

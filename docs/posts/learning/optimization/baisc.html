@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Wangkun Xu">
+<meta name="dcterms.date" content="2024-06-28">
 
-<title>Wangkun's Blog – Content</title>
+<title>Wangkun's Blog – Constrained Optimization: the Basic</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TSYFSJPRKH"></script>
 
 <script type="text/javascript">
@@ -137,17 +108,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Wangkun’s Blog</span>
     </a>
   </div>
@@ -158,7 +129,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -181,169 +152,167 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Content</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Constrained Optimization: the Basic</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Optimization</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Wangkun Xu </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 28, 2024</p>
+      </div>
+    </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 28, 2024</p>
+      </div>
+    </div>
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(10)</span></div><div class="category" data-category="Auto Differentiation">Auto Differentiation <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Implicit Function">Implicit Function <span class="quarto-category-count">(5)</span></div><div class="category" data-category="NeuralODE">NeuralODE <span class="quarto-category-count">(1)</span></div><div class="category" data-category="News">News <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Optimization">Optimization <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Paper Read">Paper Read <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Power System">Power System <span class="quarto-category-count">(3)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-
-
-
-
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-Date
-</th>
-<th>
-Title
-</th>
-<th>
-Categories
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="Optimization" data-listing-date-sort="1719504000000" data-listing-file-modified-sort="1719554108926" data-listing-date-modified-sort="1719554108000" data-listing-reading-time-sort="4" data-listing-word-count-sort="730" data-listing-title-sort="Constrained Optimization: the Basic" data-listing-filename-sort="baisc.qmd">
-<td>
-<span class="listing-date">Jun 28, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/optimization/baisc.html" class="title listing-title">Constrained Optimization: the Basic</a>
-</td>
-<td>
-<span class="listing-categories">Optimization</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="Auto Differentiation,Implicit Function,NeuralODE" data-listing-date-sort="1718640000000" data-listing-file-modified-sort="1718720791069" data-listing-date-modified-sort="1718720791000" data-listing-reading-time-sort="5" data-listing-word-count-sort="875" data-listing-title-sort="Tangent Sensitivity Analysis of ODEs" data-listing-filename-sort="forward_mode_ode.qmd">
-<td>
-<span class="listing-date">Jun 18, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/forward_mode_ode.html" class="title listing-title">Tangent Sensitivity Analysis of ODEs</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function, NeuralODE</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="Power System" data-listing-date-sort="1718294400000" data-listing-file-modified-sort="1718805723594" data-listing-date-modified-sort="1718805723000" data-listing-reading-time-sort="1" data-listing-word-count-sort="88" data-listing-title-sort="Economic Dispatch" data-listing-filename-sort="ed.qmd">
-<td>
-<span class="listing-date">Jun 14, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/ed.html" class="title listing-title">Economic Dispatch</a>
-</td>
-<td>
-<span class="listing-categories">Power System</span>
-</td>
-</tr>
-<tr data-index="3" data-categories="Power System" data-listing-date-sort="1718208000000" data-listing-file-modified-sort="1718805728271" data-listing-date-modified-sort="1718805728000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1047" data-listing-title-sort="Unit Commitment Problem" data-listing-filename-sort="ncuc.qmd">
-<td>
-<span class="listing-date">Jun 13, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/ncuc.html" class="title listing-title">Unit Commitment Problem</a>
-</td>
-<td>
-<span class="listing-categories">Power System</span>
-</td>
-</tr>
-<tr data-index="4" data-categories="Auto Differentiation,Implicit Function,Paper Read,Optimization" data-listing-date-sort="1718035200000" data-listing-file-modified-sort="1718442268829" data-listing-date-modified-sort="1718442268000" data-listing-reading-time-sort="5" data-listing-word-count-sort="989" data-listing-title-sort="Deep Implicit Layers: Differentiable Convex Layer" data-listing-filename-sort="differetiable_convex_layer.qmd">
-<td>
-<span class="listing-date">Jun 11, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/differetiable_convex_layer.html" class="title listing-title">Deep Implicit Layers: Differentiable Convex Layer</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function, Paper Read, Optimization</span>
-</td>
-</tr>
-<tr data-index="5" data-categories="Auto Differentiation,Implicit Function" data-listing-date-sort="1718035200000" data-listing-file-modified-sort="1718442311219" data-listing-date-modified-sort="1718035200000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1748" data-listing-title-sort="Deep Implicit Layers: Fixed-Point Iteration" data-listing-filename-sort="deep_implicit_layers.qmd">
-<td>
-<span class="listing-date">Jun 11, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/deep_implicit_layers.html" class="title listing-title">Deep Implicit Layers: Fixed-Point Iteration</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="6" data-categories="Power System" data-listing-date-sort="1717862400000" data-listing-file-modified-sort="1718805731753" data-listing-date-modified-sort="1717862400000" data-listing-reading-time-sort="5" data-listing-word-count-sort="805" data-listing-title-sort="Power System Operation: AC and DC Power Flow Model" data-listing-filename-sort="power_system_operation.qmd">
-<td>
-<span class="listing-date">Jun 9, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/power_system_operation.html" class="title listing-title">Power System Operation: AC and DC Power Flow Model</a>
-</td>
-<td>
-<span class="listing-categories">Power System</span>
-</td>
-</tr>
-<tr data-index="7" data-categories="Auto Differentiation,Implicit Function" data-listing-date-sort="1717516800000" data-listing-file-modified-sort="1718715250654" data-listing-date-modified-sort="1718715250000" data-listing-reading-time-sort="4" data-listing-word-count-sort="607" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations" data-listing-filename-sort="adjoint_nonlinear_equation.qmd">
-<td>
-<span class="listing-date">Jun 5, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="8" data-categories="Auto Differentiation,Implicit Function" data-listing-date-sort="1717344000000" data-listing-file-modified-sort="1718696512869" data-listing-date-modified-sort="1717430400000" data-listing-reading-time-sort="4" data-listing-word-count-sort="736" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Linear Equations" data-listing-filename-sort="adjoint_linear_equation.qmd">
-<td>
-<span class="listing-date">Jun 3, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_linear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Linear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="9" data-categories="News" data-listing-date-sort="1717084800000" data-listing-file-modified-sort="1717864975515" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="21" data-listing-title-sort="Welcome To My Blog" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 31, 2024</span>
-</td>
-<td>
-<a href="./posts/news/index.html" class="title listing-title">Welcome To My Blog</a>
-</td>
-<td>
-<span class="listing-categories">News</span>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="listing-no-matching d-none">
-No matching items
+<p>This post summarized the basic concepts in contrained optimization. The KKT conditions, necessary condition and sufficient condition for optimality will also be introduced.</p>
+<section id="general-definition-and-existence-condition" class="level2">
+<h2 class="anchored" data-anchor-id="general-definition-and-existence-condition">General Definition and Existence Condition</h2>
+<p>Consider the optimization problem <span class="math display">\[
+\begin{aligned}
+\min_x &amp; \quad f(x) \\
+\text{s.t.} &amp; \quad g(x) =0 \\
+&amp; \quad h(x) \leq 0
+\end{aligned}
+\]</span> where <span class="math inline">\(x\in\mathbb{R}^n\)</span>, <span class="math inline">\(f:\mathbb{R}^n\rightarrow\mathbb{R}\)</span>, <span class="math inline">\(g:\mathbb{R}^n\rightarrow\mathbb{R}^m\)</span>, <span class="math inline">\(g:\mathbb{R}^n\rightarrow\mathbb{R}^p\)</span>.</p>
+<p>A point <span class="math inline">\(x\)</span> satisfying all constraints is an <em>admissible point</em>. The set of all admissible points are <em>admissible set</em>, denoted as <span class="math inline">\(\mathcal{X}\)</span>.</p>
+<p>In this post, it is assumed that <span class="math inline">\(f, g, h\)</span> are two times differentiable.</p>
+<p>An <em>open ball</em> with center <span class="math inline">\(x^\star\)</span> and radius <span class="math inline">\(\theta&gt;0\)</span> is <span class="math display">\[
+B\left(x^{\star}, \theta\right)=\left\{x \in \mathbb{R}^n \mid\left\|x-x^{\star}\right\|&lt;\theta\right\}
+\]</span></p>
+<p>A point <span class="math inline">\(x^\star \in \mathcal{X}\)</span> is a <em>constrained local minimizer</em> if there exists <span class="math inline">\(\theta&gt;0\)</span> such that <span class="math display">\[
+f(y) \geq f(x) \quad \forall y \in \mathcal{X} \cap B\left(x^{\star}, \theta\right)
+\]</span></p>
+<p>A point <span class="math inline">\(x^\star \in \mathcal{X}\)</span> is a <em>constrained global minimizer</em> if <span class="math display">\[
+f(y) \geq f(x) \quad \forall y \in \mathcal{X}
+\]</span></p>
+<p>If the inequality becomes equality with the extra condition <span class="math inline">\(y\neq x^\star\)</span>, then <span class="math inline">\(x^\star\)</span> is a <em>strictly constrained (global) minimizer</em>.</p>
+<p>The <span class="math inline">\(i\)</span>-th inequality constraint is <em>active</em> at <span class="math inline">\(\tilde{x}\)</span> if <span class="math inline">\(h_i(\tilde{x})=0\)</span>. Otherwise, it is <em>inactive</em>. An index set of active inequality constraints is denoted as <span class="math inline">\(I_a(\tilde{x}) = \{i\in\{1,\cdots,p\}\mid h_i(\tilde{x})=0\}\)</span>. A vector <span class="math inline">\(h_a(\tilde{x}) = \{h_i(\tilde{x})\mid i\in I_a(\tilde{x})\}\)</span> is the subvector of active inequality constraints.</p>
+<p>A point <span class="math inline">\(\tilde{x}\)</span> is a <em>regular point</em> if the gradients of active inequality constraints and equality cosntraints are linearly independent. E.g., <span class="math inline">\(\nabla g_i(x),i=1,\cdots,m\)</span> and <span class="math inline">\(\nabla h_j(x),j\in I_a(x)\)</span> are linearly independent. This is also referred as <em>linear independence constraint qualification (LICQ)</em>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-</div></main> <!-- /main -->
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When the constraints are linear, e.g.&nbsp;<span class="math inline">\(A\tilde{x} = b\)</span>, then <span class="math inline">\(\tilde{x}\)</span> is a regular point if <span class="math inline">\(A\)</span> is full <strong>row</strong> rank.</p>
+</div>
+</div>
+<p>The optimality condition is relatively simple for regular points (or the LICQ condition holds). Consider the Lagrange function <span class="math display">\[
+\mathcal{L}(x,\lambda,\rho) = f(x) + \lambda^Tg(x) + \nu^Th(x)
+\]</span></p>
+<p><em>First-order necessary condition</em></p>
+<p>Suppose <span class="math inline">\(x^\star\)</span> is a constrained local minimizer and <span class="math inline">\(x^\star\)</span> is a regular points for the constraints (aka, the LICQ condition holds). Then there exists unique mutiplier <span class="math inline">\(\lambda^\star\)</span> and <span class="math inline">\(\nu^\star\)</span> such that <span id="eq-KKT"><span class="math display">\[
+\begin{aligned}
+&amp; \nabla_x L\left(x^{\star}, \lambda^{\star}, \rho^{\star}\right)=0 \\
+&amp; g\left(x^{\star}\right)=0 \\
+&amp; h\left(x^{\star}\right) \leq 0 \\
+&amp; \rho^{\star} \geq 0 \\
+&amp; \left(\rho^{\star}\right)^T h\left(x^{\star}\right)=0
+\end{aligned}
+\tag{1}\]</span></span> where <a href="#eq-KKT" class="quarto-xref">Equation&nbsp;1</a> is the Karush-Kuhn-Tucker (KKT) conditions.</p>
+<p>The last condition is the complementarity slackness. It implies that if the <span class="math inline">\(i\)</span>-th inequality constraint is inactive, then the corresponding multiplier <span class="math inline">\(\rho^\star_i\)</span> is zero.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Other constraint qualification (QC) or regularity condition is also available, e.g., the <em>Mangasarian-Fromovitz constraint qualification (MFCQ)</em>. For convex optimization, the <em>Slater’s condition</em> is also a popular choice.</p>
+</div>
+</div>
+<p>In Boyd’s book, the necessary condition is stated as,</p>
+<blockquote class="blockquote">
+<p>For any optimization problem with diﬀerentiable objective and constraint functions for which <strong>strong duality obtains</strong>, any pair of primal and dual optimal points must satisfy the KKT conditions. In this sense, the condition of strong duality performs the role of QC.</p>
+</blockquote>
+<p><em>Second-order sufficient condition</em></p>
+<p>Let <span class="math inline">\(x^\star\)</span> be a local solution and <span class="math inline">\(\rho^\star\)</span> be the multiplier of the inequality constraint. Then the <em>strict complementarity condition</em> holds if <span class="math inline">\(\rho^\star_i&gt;0\)</span> for all <span class="math inline">\(i\in\mathcal{I}_a(\tilde{x})\)</span>. This condition implies at most one of the <span class="math inline">\(\rho^\star_i\)</span> and <span class="math inline">\(h_i(x^\star)\)</span> is zero.</p>
+<p>1). Assume that there exist <span class="math inline">\(x^\star, \lambda^\star, \rho^\star\)</span> such that the KKT conditions hold. 2). Suppose moreover that <span class="math inline">\(\rho^\star\)</span> is such that the strict complementary condition holds at <span class="math inline">\(x^\star\)</span>. 3). Assume final that <span class="math display">\[
+s^T\nabla^2_{xx}L(x^\star,\lambda^\star,\rho^\star)s &gt; 0
+\]</span> such that for all <span class="math inline">\(s\neq 0\)</span>, <span class="math display">\[
+\begin{bmatrix}
+\nabla_x g(x^\star) \\
+\nabla_x h_a(x^\star)
+\end{bmatrix} s = 0
+\]</span> holds. Then <span class="math inline">\(x^\star\)</span> is a strict constrained local minimizer.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The necessary and sufficient conditions become global if the optimization is convex.</p>
+</div>
+</div>
+</section>
+<section id="conditions-for-convex-optimization" class="level2">
+<h2 class="anchored" data-anchor-id="conditions-for-convex-optimization">Conditions for Convex Optimization</h2>
+<p>As mentioned above, the local (strict) contrained minimizer is also a global (strict) constrained minimizer if the optimization problem is convex.</p>
+<p>Convex optimization must be in the form of <span class="math display">\[
+\begin{aligned}
+\min_x &amp; \quad f(x) \\
+\text{s.t.} &amp; \quad Ax =b \\
+&amp; \quad h_i(x) \leq 0, \quad i=1,\cdots,p
+\end{aligned}
+\]</span></p>
+<p>In Boyd’s book, the constraint qualification is defined as</p>
+<blockquote class="blockquote">
+<p>There are many results that establish conditions on the problem, beyond convexity, under which strong duality holds. These conditions are called constraint qualiﬁcations.</p>
+</blockquote>
+<p>A commonly used QC for convex optimization is the <em>Slater’s condition</em>: There exists <span class="math inline">\(x\in \text{relient}\mathcal{X}\)</span> such that <span class="math inline">\(h_i(x)&lt;0\)</span> for all <span class="math inline">\(i=1,\cdots,p\)</span> and <span class="math inline">\(Ax = b\)</span>. Slator’s condition statet that for convex optimization, the strong duality holds if the Slater’s condition holds.</p>
+<p>Then back to the necessary condition, for convex problem, if the slator condition holds, the strong duality condition holds, the KKT condition <a href="#eq-KKT" class="quarto-xref">Equation&nbsp;1</a> must be satisfied.</p>
+<p>For the sufficiency, for convex optimization problem, the KKT condition is sufficient for (primal and dual) optimality. I.e., any pair of <span class="math inline">\(\tilde{x}, \tilde{\lambda}, \tilde{\nu}\)</span> is primal and dual optimal.</p>
+<p>With the Slator’s condition, the KKT condition is both necessary and sufficient for (primal and dual) optimality (zero-duality gap).</p>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

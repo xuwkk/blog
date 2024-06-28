@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Wangkun Xu">
+<meta name="dcterms.date" content="2024-06-26">
 
-<title>Wangkun's Blog – Content</title>
+<title>Wangkun's Blog – Nine-Bus Three-Machine System Stability Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TSYFSJPRKH"></script>
 
 <script type="text/javascript">
@@ -137,17 +108,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Wangkun’s Blog</span>
     </a>
   </div>
@@ -158,7 +129,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -181,169 +152,152 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Content</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Nine-Bus Three-Machine System Stability Analysis</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Power System</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Wangkun Xu </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 26, 2024</p>
+      </div>
+    </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 26, 2024</p>
+      </div>
+    </div>
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(10)</span></div><div class="category" data-category="Auto Differentiation">Auto Differentiation <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Implicit Function">Implicit Function <span class="quarto-category-count">(5)</span></div><div class="category" data-category="NeuralODE">NeuralODE <span class="quarto-category-count">(1)</span></div><div class="category" data-category="News">News <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Optimization">Optimization <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Paper Read">Paper Read <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Power System">Power System <span class="quarto-category-count">(3)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-
-
-
-
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-Date
-</th>
-<th>
-Title
-</th>
-<th>
-Categories
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="Optimization" data-listing-date-sort="1719504000000" data-listing-file-modified-sort="1719554108926" data-listing-date-modified-sort="1719554108000" data-listing-reading-time-sort="4" data-listing-word-count-sort="730" data-listing-title-sort="Constrained Optimization: the Basic" data-listing-filename-sort="baisc.qmd">
-<td>
-<span class="listing-date">Jun 28, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/optimization/baisc.html" class="title listing-title">Constrained Optimization: the Basic</a>
-</td>
-<td>
-<span class="listing-categories">Optimization</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="Auto Differentiation,Implicit Function,NeuralODE" data-listing-date-sort="1718640000000" data-listing-file-modified-sort="1718720791069" data-listing-date-modified-sort="1718720791000" data-listing-reading-time-sort="5" data-listing-word-count-sort="875" data-listing-title-sort="Tangent Sensitivity Analysis of ODEs" data-listing-filename-sort="forward_mode_ode.qmd">
-<td>
-<span class="listing-date">Jun 18, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/forward_mode_ode.html" class="title listing-title">Tangent Sensitivity Analysis of ODEs</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function, NeuralODE</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="Power System" data-listing-date-sort="1718294400000" data-listing-file-modified-sort="1718805723594" data-listing-date-modified-sort="1718805723000" data-listing-reading-time-sort="1" data-listing-word-count-sort="88" data-listing-title-sort="Economic Dispatch" data-listing-filename-sort="ed.qmd">
-<td>
-<span class="listing-date">Jun 14, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/ed.html" class="title listing-title">Economic Dispatch</a>
-</td>
-<td>
-<span class="listing-categories">Power System</span>
-</td>
-</tr>
-<tr data-index="3" data-categories="Power System" data-listing-date-sort="1718208000000" data-listing-file-modified-sort="1718805728271" data-listing-date-modified-sort="1718805728000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1047" data-listing-title-sort="Unit Commitment Problem" data-listing-filename-sort="ncuc.qmd">
-<td>
-<span class="listing-date">Jun 13, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/ncuc.html" class="title listing-title">Unit Commitment Problem</a>
-</td>
-<td>
-<span class="listing-categories">Power System</span>
-</td>
-</tr>
-<tr data-index="4" data-categories="Auto Differentiation,Implicit Function,Paper Read,Optimization" data-listing-date-sort="1718035200000" data-listing-file-modified-sort="1718442268829" data-listing-date-modified-sort="1718442268000" data-listing-reading-time-sort="5" data-listing-word-count-sort="989" data-listing-title-sort="Deep Implicit Layers: Differentiable Convex Layer" data-listing-filename-sort="differetiable_convex_layer.qmd">
-<td>
-<span class="listing-date">Jun 11, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/differetiable_convex_layer.html" class="title listing-title">Deep Implicit Layers: Differentiable Convex Layer</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function, Paper Read, Optimization</span>
-</td>
-</tr>
-<tr data-index="5" data-categories="Auto Differentiation,Implicit Function" data-listing-date-sort="1718035200000" data-listing-file-modified-sort="1718442311219" data-listing-date-modified-sort="1718035200000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1748" data-listing-title-sort="Deep Implicit Layers: Fixed-Point Iteration" data-listing-filename-sort="deep_implicit_layers.qmd">
-<td>
-<span class="listing-date">Jun 11, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/deep_implicit_layers.html" class="title listing-title">Deep Implicit Layers: Fixed-Point Iteration</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="6" data-categories="Power System" data-listing-date-sort="1717862400000" data-listing-file-modified-sort="1718805731753" data-listing-date-modified-sort="1717862400000" data-listing-reading-time-sort="5" data-listing-word-count-sort="805" data-listing-title-sort="Power System Operation: AC and DC Power Flow Model" data-listing-filename-sort="power_system_operation.qmd">
-<td>
-<span class="listing-date">Jun 9, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/power_system/power_system_operation.html" class="title listing-title">Power System Operation: AC and DC Power Flow Model</a>
-</td>
-<td>
-<span class="listing-categories">Power System</span>
-</td>
-</tr>
-<tr data-index="7" data-categories="Auto Differentiation,Implicit Function" data-listing-date-sort="1717516800000" data-listing-file-modified-sort="1718715250654" data-listing-date-modified-sort="1718715250000" data-listing-reading-time-sort="4" data-listing-word-count-sort="607" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations" data-listing-filename-sort="adjoint_nonlinear_equation.qmd">
-<td>
-<span class="listing-date">Jun 5, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Nonlinear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="8" data-categories="Auto Differentiation,Implicit Function" data-listing-date-sort="1717344000000" data-listing-file-modified-sort="1718696512869" data-listing-date-modified-sort="1717430400000" data-listing-reading-time-sort="4" data-listing-word-count-sort="736" data-listing-title-sort="Tangent and Adjoint Sensitivity Analysis of Linear Equations" data-listing-filename-sort="adjoint_linear_equation.qmd">
-<td>
-<span class="listing-date">Jun 3, 2024</span>
-</td>
-<td>
-<a href="./posts/learning/autometic_differentiation/adjoint_linear_equation.html" class="title listing-title">Tangent and Adjoint Sensitivity Analysis of Linear Equations</a>
-</td>
-<td>
-<span class="listing-categories">Auto Differentiation, Implicit Function</span>
-</td>
-</tr>
-<tr data-index="9" data-categories="News" data-listing-date-sort="1717084800000" data-listing-file-modified-sort="1717864975515" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="21" data-listing-title-sort="Welcome To My Blog" data-listing-filename-sort="index.qmd">
-<td>
-<span class="listing-date">May 31, 2024</span>
-</td>
-<td>
-<a href="./posts/news/index.html" class="title listing-title">Welcome To My Blog</a>
-</td>
-<td>
-<span class="listing-categories">News</span>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="listing-no-matching d-none">
-No matching items
+<p>This post continues the study of mathmatical modelling of power system. <a href="posts/learning/power_system/dynamic_model.qmd">One-machine infinite-bus system</a> can be found in the previous post. The main reference of this post is the book “Power System Control and Stability” by P. M. Anderson and A. A. Fouad.</p>
+<section id="classical-model-of-a-multimachine-system" class="level2">
+<h2 class="anchored" data-anchor-id="classical-model-of-a-multimachine-system">Classical Model of a Multimachine System</h2>
+<p>The assumptions used in the single-machine infinite-bus model can be extended to multi-machine system (see <a href="posts/learning/power_system/dynamic_model.qmd">here</a>). Assumption 2 can be improved by including a linear damping <span class="math inline">\(D\omega\)</span> in the swing equation as a damping torque (or power). Values of damping is usually in 1-3 pu. In assumption 5, the load is represented by constant shunt impedance. However, loads have their own dynamics and can have a marked effect on stability results.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/2024-06-25-14-46-04.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>n-machine system (the classical model)</figcaption>
+</figure>
 </div>
-</div></main> <!-- /main -->
+<p>Constructing <span class="math inline">\(n\)</span>-port network, looking into the network from the ternimals of the generator, is defined by <span class="math display">\[
+\bar{I} = \bar{Y}\bar{E}
+\]</span> where <span class="math inline">\(\bar{I}\)</span> and <span class="math inline">\(\bar{E}\)</span> are <span class="math inline">\(n\)</span>-dimensional complex vectors. By definition, <span class="math display">\[
+\begin{aligned}
+\bar{Y}_{i i} &amp; =Y_{i i}\angle\theta_{i i}=\text { driving point admittance for node } i \\
+&amp; =G_{i i}+\mathrm{j} B_{i i} \\
+\bar{Y}_{i j} &amp; =Y_{i j} \angle \theta_{i j}=\text { negative of the transfer admittance between nodes } i \text { and } j \\
+&amp; =G_{i j}+j B_{i j}
+\end{aligned}
+\]</span></p>
+<p>The electric power output at <span class="math inline">\(i\)</span>-th machine is: <span class="math display">\[
+\begin{aligned}
+P_{e i} &amp; =E_i^2 G_{i i}+\sum_{\substack{j=1 \\
+j \neq i}}^n E_i E_j Y_{i j} \cos \left(\theta_{i j}-\delta_i+\delta_j\right) \quad i=1,2, \ldots, n \\
+&amp; =E_i^2 G_{i i}+\sum_{\substack{j=1 \\
+j \neq i}}^n E_i E_j\left[B_{i j} \sin \left(\delta_i-\delta_j\right)+G_{i j} \cos \left(\delta_i-\delta_j\right)\right] \quad i=1,2, \ldots, n
+\end{aligned}
+\]</span></p>
+<p>The equation of motion becomes <span class="math display">\[
+\begin{aligned}
+\frac{2 H_i}{\omega_{{R}}} \frac{d \omega_i}{d t}+D_i \omega_i &amp; =P_{m i}-\left[E_i^2 G_{i i}+\sum_{\substack{j=1 \\
+j \neq i}}^n E_i E_j Y_{i j} \cos \left(\theta_{i j}-\delta_i+\delta_j\right)\right] \\
+\frac{d \delta_i}{d t} &amp; =\omega_i-\omega_{{R}} \quad i=1,2, \ldots, n
+\end{aligned}
+\]</span></p>
+<p>It should be noted that prior to the disturbance (<span class="math inline">\(t=0^-\)</span>), <span class="math inline">\(P_{mi0} = P_{ei0}\)</span>, <span class="math display">\[
+P_{m i 0}=E_i^2 G_{i i 0}+\sum_{\substack{j=1 \\ j \neq i}}^n E_i E_j Y_{i j 0} \cos \left(\theta_{i j 0}-\delta_{i 0}+\delta_{j 0}\right)
+\]</span> where <span class="math inline">\(0\)</span> is used to represent the condition of pre-transient. Also note that the <span class="math inline">\(G\)</span> and <span class="math inline">\(Y\)</span> are also subject to disturbance during and after the disturbance.</p>
+<p>The <span class="math inline">\(n\)</span>-machine system can be represented by a set of <span class="math inline">\(2n\)</span> first-order ODEs. The state vector is defined as <span class="math display">\[
+\mathbf{x} \left[\delta_{1}, \delta_{2}, \ldots, \delta_{n}, \omega_{1}, \omega_{2}, \ldots, \omega_{n}\right]
+\]</span></p>
+</section>
+<section id="analysis-of-three-machine-nine-bus-system" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-three-machine-nine-bus-system">Analysis of Three-Machine Nine-Bus System</h2>
+<p>The classical model of a synchronous machine may be used to study the stability of a power system for a period of time during which the system dynamic response is dependent largely on the <strong>stored kinetic energy</strong> in the rotating masses. For many power systems this time is on the <strong>order of one second or less</strong>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/2024-06-25-15-34-50.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Nine-bus three-machine system. All impedances are given in pu on a 100MVA base</figcaption>
+</figure>
+</div>
+<p>We need the following data for the transisent stability analysis:</p>
+<ol type="1">
+<li>Inertia constant <span class="math inline">\(H\)</span> and direct axis transient reactance <span class="math inline">\(x_d'\)</span> for all generators.</li>
+<li>Type, start, and clearing time of the disturbance or fault.</li>
+<li>Transmission network impedances for the initial (pre-transient), transient, post-transient network.</li>
+</ol>
+<p>The step of transient stability analysis can be summarized as follows:</p>
+<ol type="1">
+<li>Convert the system data into per unit (usually with respect to 100MVA).</li>
+<li>Do load (power) flow analysis to obtain the voltage at each bus, this can be done by <code>MatPower</code> or <code>PyPower</code>.</li>
+<li>Determine the equivalent impedance of the loads. Let the load voltage be <span class="math inline">\(\bar{V}_L\)</span>, the curent flowing to the load be <span class="math inline">\(\bar{I}_L\)</span>, the equivalent load admittance be <span class="math inline">\(\bar{Y}_L = G_L + jB_L\)</span>. Therefore <span class="math inline">\(\bar{Y}_L = \frac{P_L}{{V}_L^2} - j\frac{Q_L}{{V}_L^2}\)</span>.</li>
+<li>Determine the internal voltage <span class="math inline">\(E_i\angle\delta_{i0}\)</span> for each generator. Assume the terminal voltage is the reference (shown by the below figure), then we can have <span class="math display">\[
+\begin{aligned}
+P + jQ = \bar{V}_i\bar{I}_i^* \Longrightarrow \\
+\bar{I} = \frac{P - jQ}{V} \Longrightarrow \\
+E\angle\delta' = \bar{v} + jx_d'\bar{I} = V+\frac{x_d'Q}{V} + j\frac{x_d'P}{V} \Longrightarrow \\
+\delta_0 = \delta' + \alpha
+\end{aligned}
+\]</span> where <span class="math inline">\(\alpha\)</span> is the terminal voltage angle determined by the load flow analysis.</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/2024-06-26-07-41-57.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figcaption>Equivalent circuit to compute <span class="math inline">\(\delta_{i0}\)</span></figcaption>
+</figure>
+</div>
+<ol start="5" type="1">
+<li>Compute <span class="math inline">\(\bar{Y}\)</span> for each network condition. The load impedance is added between the load bus and the reference bus; the <span class="math inline">\(x_d'\)</span> is added between the generator node and the generator terminal nodes. <span class="math inline">\(\bar{Y}_{ii}\)</span> is the sum of the admittances connected to the <span class="math inline">\(i\)</span>-th bus (including the equivalent load impedance connected to the 0 node). <span class="math inline">\(\bar{Y}_{ij}\)</span> is the negative of the admittance between the <span class="math inline">\(i\)</span>-th and <span class="math inline">\(j\)</span>-th bus.</li>
+<li>Eliminate all the nodes that are not a internal generator (into a reduced network). This can be done by noticing that only the internal generator node has non-zero current injection. <span class="math display">\[
+\left[\begin{array}{c}
+\mathbf{I}_n \\
+\hdashline \mathbf{0}
+\end{array}\right]=\left[\begin{array}{l:c}
+\mathbf{Y}_{n n} &amp; \mathbf{Y}_{n r} \\
+\hdashline \mathbf{Y}_m &amp; \mathbf{Y}_{r r}
+\end{array}\right]\left[\begin{array}{c}
+\mathbf{V}_n \\
+\hdashline \mathbf{V}_r
+\end{array}\right]
+\]</span></li>
+</ol>
+<p>Eliminate <span class="math inline">\(V_r\)</span>, we have <span class="math display">\[
+I_n = (Y_{nn} - Y_{nr}Y_{rr}^{-1}Y_{rn})V_n
+\]</span></p>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

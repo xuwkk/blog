@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/learning/optimization/baisc.html",
       "/posts/learning/autometic_differentiation/forward_mode_ode.html",
       "/posts/learning/power_system/ed.html",
       "/posts/learning/power_system/ncuc.html",

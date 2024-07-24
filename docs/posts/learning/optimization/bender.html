@@ -9,7 +9,7 @@
 <meta name="author" content="Wangkun Xu">
 <meta name="dcterms.date" content="2024-06-28">
 
-<title>Wangkun's Blog – Constrained Optimization: the Basic</title>
+<title>Wangkun's Blog – Bender’s Decomposition for (Mixed-Integer) Linear Programming</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -153,7 +153,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Constrained Optimization: the Basic</h1>
+      <h1 class="title">Bender’s Decomposition for (Mixed-Integer) Linear Programming</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Optimization</div>
               </div>
@@ -198,131 +198,91 @@ window.Quarto = {
 
 
 
-<p>This post summarized the basic concepts in contrained optimization. The KKT conditions, necessary condition and sufficient condition for optimality will also be introduced.</p>
-<section id="general-definition-and-existence-condition" class="level2">
-<h2 class="anchored" data-anchor-id="general-definition-and-existence-condition">General Definition and Existence Condition</h2>
-<p>Consider the constrained optimization problem <span class="math display">\[
+<section id="benders-decomposition-for-lp" class="level2">
+<h2 class="anchored" data-anchor-id="benders-decomposition-for-lp">Bender’s Decomposition for LP</h2>
+<section id="formulation" class="level3">
+<h3 class="anchored" data-anchor-id="formulation">Formulation</h3>
+<p>The Bender’s decomposition is usually used for solving LP with complicating variables. A complicating variables are those varialbes avoiding the LP to be solved 1. distributedly or from the 2. straight-forward solution.</p>
+<p>Consider the following LP: <span id="eq-LP"><span class="math display">\[
 \begin{aligned}
-\min_x &amp; \quad f(x) \\
-\text{s.t.} &amp; \quad g(x) =0 \\
-&amp; \quad h(x) \leq 0
+\min_{x,y} &amp; \quad \sum_{i=1}^n c_i x_i + \sum_{j=1}^m d_j y_j \\
+\text{s.t.} &amp; \quad \sum_{i=1}^n a_{li} x_i + \sum_{j=1}^m b_{lj} y_j \leq b^{(l)}, \quad l=1,\ldots,q \\
+&amp; \quad 0 \leq x_i \leq x_i^{up}, \quad i=1,\ldots,n \\
+&amp; \quad 0 \leq y_j \leq y_j^{up}, \quad j=1,\ldots,m
 \end{aligned}
-\]</span> where <span class="math inline">\(x\in\mathbb{R}^n\)</span>, <span class="math inline">\(f:\mathbb{R}^n\rightarrow\mathbb{R}\)</span>, <span class="math inline">\(g:\mathbb{R}^n\rightarrow\mathbb{R}^m\)</span>, <span class="math inline">\(g:\mathbb{R}^n\rightarrow\mathbb{R}^p\)</span>.</p>
-<p>A point <span class="math inline">\(x\)</span> satisfying all constraints is an <em>admissible point</em>. The set of all admissible points are <em>admissible set</em>, denoted as <span class="math inline">\(\mathcal{X}\)</span>.</p>
-<p>In this post, it is assumed that <span class="math inline">\(f, g, h\)</span> are two times differentiable.</p>
-<p>An <em>open ball</em> with center <span class="math inline">\(x^\star\)</span> and radius <span class="math inline">\(\theta&gt;0\)</span> is <span class="math display">\[
-B\left(x^{\star}, \theta\right)=\left\{x \in \mathbb{R}^n \mid\left\|x-x^{\star}\right\|&lt;\theta\right\}
-\]</span></p>
-<p>A point <span class="math inline">\(x^\star \in \mathcal{X}\)</span> is a <em>constrained local minimizer</em> if there exists <span class="math inline">\(\theta&gt;0\)</span> such that <span class="math display">\[
-f(y) \geq f(x) \quad \forall y \in \mathcal{X} \cap B\left(x^{\star}, \theta\right)
-\]</span></p>
-<p>A point <span class="math inline">\(x^\star \in \mathcal{X}\)</span> is a <em>constrained global minimizer</em> if <span class="math display">\[
-f(y) \geq f(x) \quad \forall y \in \mathcal{X}
-\]</span></p>
-<p>If the <span class="math inline">\(\geq\)</span> becomes <span class="math inline">\(&gt;\)</span> with the extra condition <span class="math inline">\(y\neq x^\star\)</span>, then <span class="math inline">\(x^\star\)</span> is a <em>strictly constrained (global) minimizer</em>.</p>
-<p>The <span class="math inline">\(i\)</span>-th inequality constraint is <em>active</em> at <span class="math inline">\(\tilde{x}\)</span> if <span class="math inline">\(h_i(\tilde{x})=0\)</span>. Otherwise, it is <em>inactive</em>. An index set of active inequality constraints is denoted as <span class="math inline">\(I_a(\tilde{x}) = \{i\in\{1,\cdots,p\}\mid h_i(\tilde{x})=0\}\)</span>. A vector <span class="math inline">\(h_a(\tilde{x}) = \{h_i(\tilde{x})\mid i\in I_a(\tilde{x})\}\)</span> is the subvector of active inequality constraints.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Sometimes the equality constraints are also referred as <em>active</em> constraints.</p>
-</div>
-</div>
-<p>A point <span class="math inline">\(\tilde{x}\)</span> is a <em>regular point</em> if the <strong>gradients</strong> of active inequality constraints and equality cosntraints are linearly independent. E.g., <span class="math inline">\(\nabla g_i(x),i=1,\cdots,m\)</span> and <span class="math inline">\(\nabla h_j(x),j\in I_a(x)\)</span> are linearly independent. This is also referred as <em>linear independence constraint qualification (LICQ)</em>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>When the constraints are linear, e.g.&nbsp;<span class="math inline">\(A\tilde{x} = b\)</span>, then <span class="math inline">\(\tilde{x}\)</span> is a regular point if <span class="math inline">\(A\)</span> is full <strong>row</strong> rank.</p>
-</div>
-</div>
-<p>The optimality condition is relatively simple for regular points (or the LICQ condition holds). Consider the Lagrange function <span class="math display">\[
-\mathcal{L}(x,\lambda,\nu) = f(x) + \lambda^Tg(x) + \nu^Th(x)
-\]</span></p>
-<p><em>First-order necessary condition</em></p>
-<p>Suppose <span class="math inline">\(x^\star\)</span> is a constrained local minimizer and <span class="math inline">\(x^\star\)</span> is a <strong>regular points</strong> for the constraints (aka, the LICQ condition holds). Then there exists unique mutiplier <span class="math inline">\(\lambda^\star\)</span> and <span class="math inline">\(\nu^\star\)</span> such that <span id="eq-KKT"><span class="math display">\[
+\tag{1}\]</span></span> where <span class="math inline">\(x_i^{up}\)</span> and <span class="math inline">\(y_j^{up}\)</span> are the upper bounds of <span class="math inline">\(x_i\)</span> and <span class="math inline">\(y_j\)</span>, respectively.</p>
+<p>If <span class="math inline">\(x_i\)</span>s are known, this LP can be easily solved distributedly for each <span class="math inline">\(j=1,\ldots,m\)</span>. The Bender’s decomposition is to efficiently solve subproblems for <span class="math inline">\(y_j\)</span>s with the cost of iterations.</p>
+<p>Introduce the <strong>value function</strong>: for given <span class="math inline">\(x\)</span> (as a constant), <span id="eq-value_function"><span class="math display">\[
 \begin{aligned}
-&amp; \nabla_x L\left(x^{\star}, \lambda^{\star}, \nu^{\star}\right)=0 \\
-&amp; g\left(x^{\star}\right)=0 \\
-&amp; h\left(x^{\star}\right) \leq 0 \\
-&amp; \nu^{\star} \geq 0 \\
-&amp; \left(\nu^{\star}\right)^T h\left(x^{\star}\right)=0
+\alpha(x) = \min_{y} &amp; \quad \sum_{j=1}^m d_j y_j \\
+\text{s.t.} &amp; \quad \sum_{j=1}^m b_{lj} y_j \leq b^{(l)} - \sum_{i=1}^n a_{li} x_i, \quad l=1,\ldots,q \\
+&amp; \quad 0 \leq y_j \leq y_j^{up}, \quad j=1,\ldots,m
 \end{aligned}
-\tag{1}\]</span></span> where <a href="#eq-KKT" class="quarto-xref">Equation&nbsp;1</a> is the Karush-Kuhn-Tucker (KKT) conditions.</p>
-<p>The first condition is the stationary condition. It gives that the gradient of the objective can be written as weighted sum of the gradients of the constraints.</p>
-<p>The last condition is the <em>complementarity slackness</em>. It implies that if the <span class="math inline">\(i\)</span>-th inequality constraint is inactive, then the corresponding multiplier <span class="math inline">\(\nu^\star_i\)</span> is zero.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Other constraint qualification (QC) or regularity condition is also available, e.g., the <em>Mangasarian-Fromovitz constraint qualification (MFCQ)</em>. For convex optimization, the <em>Slater’s condition</em> is also a popular choice.</p>
-</div>
-</div>
-<p>In Boyd’s book, the necessary condition is stated as,</p>
-<blockquote class="blockquote">
-<p>For any optimization problem with diﬀerentiable objective and constraint functions for which <strong>strong duality obtains</strong>, any pair of primal and dual optimal points must satisfy the KKT conditions. In this sense, the condition of strong duality performs the role of QC.</p>
-</blockquote>
-<p><em>Strict Compelmentarity Condition</em></p>
-<p>Let <span class="math inline">\(x^\star\)</span> be a local solution and <span class="math inline">\(\nu^\star\)</span> be the multiplier of the inequality constraint. Then the <em>strict complementarity condition</em> holds if <span class="math inline">\(\nu^\star_i&gt;0\)</span> for all <span class="math inline">\(i\in\mathcal{I}_a(\tilde{x})\)</span>. This condition implies at most one of the <span class="math inline">\(\nu^\star_i\)</span> and <span class="math inline">\(h_i(x^\star)\)</span> is zero.</p>
-<p><em>Second-order sufficient condition</em></p>
-<p>1). Assume that there exist <span class="math inline">\(x^\star, \lambda^\star, \nu^\star\)</span> such that the KKT conditions hold. 2). Suppose moreover that <span class="math inline">\(\nu^\star\)</span> is such that the strict complementary condition holds at <span class="math inline">\(x^\star\)</span>. 3). Assume final that <span class="math display">\[
-s^T\nabla^2_{xx}L(x^\star,\lambda^\star,\nu^\star)s &gt; 0
-\]</span> such that for all <span class="math inline">\(s\neq 0\)</span>, <span class="math display">\[
-\begin{bmatrix}
-\nabla_x g(x^\star) \\
-\nabla_x h_a(x^\star)
-\end{bmatrix} s = 0
-\]</span> holds. Then <span class="math inline">\(x^\star\)</span> is a strict constrained local minimizer.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The necessary and sufficient conditions become global if the optimization is convex.</p>
-</div>
-</div>
+\tag{2}\]</span></span> which is convex on <span class="math inline">\(x\)</span> (the proof can be found in Boyd’s book). Therefore, <span class="math inline">\(\alpha(x)\)</span> can be approximated from the lower bound: <span class="math display">\[
+\alpha(x) \geq \alpha(\tilde{x}) + \nabla \alpha(\tilde{x})^T (x - \tilde{x})
+\]</span> where <span class="math inline">\(\tilde{x}\)</span> is given.</p>
+<p>The original LP becomes a Bilevel optimization: <span class="math display">\[
+\begin{aligned}
+\min_{x} &amp; \quad \sum_{i=1}^n c_i x_i + \alpha(x) \\
+\text{s.t.} &amp; \quad 0 \leq x_i \leq x_i^{up}, \quad i=1,\ldots,n
+\end{aligned}
+\]</span> where the lower level problem is the value function <span class="math inline">\(\alpha(x)\)</span>.</p>
+<p>The idea of Bender’s decomposition is now straight-forward. In the original LP <a href="#eq-LP" class="quarto-xref">Equation&nbsp;1</a>, if we fix <span class="math inline">\(x_i\)</span>s, the solution is a upper bound of the original LP. In the Bilevel optimization <a href="#eq-value_function" class="quarto-xref">Equation&nbsp;2</a>, if we approximate <span class="math inline">\(\alpha(x)\)</span> from the lower bound, the solution is a lower bound. Therefore, we can iteratively update the upper bound and the lower bound until they are close enough.</p>
 </section>
-<section id="conditions-for-convex-optimization" class="level2">
-<h2 class="anchored" data-anchor-id="conditions-for-convex-optimization">Conditions for Convex Optimization</h2>
-<p>As mentioned above, the local (strict) contrained minimizer is also a global (strict) constrained minimizer if the optimization problem is convex.</p>
-<p>Convex optimization must be in the form of <span class="math display">\[
+<section id="algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="algorithm">Algorithm</h3>
+<p>The iteration index is denoted as <span class="math inline">\((k)\)</span>. The algorithm is as follows:</p>
+<p>Step 0: Initialize <span class="math inline">\(x^{(0)}\)</span> and <span class="math inline">\(\alpha^{(0)}\)</span> by solving <span class="math display">\[
 \begin{aligned}
-\min_x &amp; \quad f(x) \\
-\text{s.t.} &amp; \quad Ax =b \\
-&amp; \quad h_i(x) \leq 0, \quad i=1,\cdots,p
+\min_{x} &amp; \quad \sum_{i=1}^n c_i x_i + \alpha \\
+\text{s.t.} &amp; \quad 0 \leq x_i \leq x_i^{up}, \quad i=1,\ldots,n \\
+&amp; \quad \alpha \geq \alpha^{down} \\
+\end{aligned}
+\]</span> where <span class="math inline">\(\alpha^{down}\)</span> is a given lower bound of <span class="math inline">\(\alpha(x)\)</span>. Note that this optimization has solution at the boundary.</p>
+<p>Step 1: Solve the subproblem (lower level) given by <a href="#eq-value_function" class="quarto-xref">Equation&nbsp;2</a>: <span id="eq-subproblem"><span class="math display">\[
+\begin{aligned}
+\min_{y} &amp; \quad \sum_{j=1}^m d_j y_j \\
+\text{s.t.} &amp; \quad \sum_{j=1}^m b_{lj} y_j \leq b^{(l)} - \sum_{i=1}^n a_{li} x_i, \quad l=1,\ldots,q \\
+&amp; \quad 0 \leq y_j \leq y_j^{up}, \quad j=1,\ldots,m \\
+&amp; \quad x_i = x_i^{(k)} \quad \lambda_i, \quad i=1,\ldots,n
+\end{aligned}
+\tag{3}\]</span></span> where <span class="math inline">\(\lambda_i\)</span> is the dual of the <span class="math inline">\(i\)</span>-th constraint. The sensitivity <span class="math inline">\(\nabla \alpha(x^{(k)})\)</span> equals to the dual variables. The solution is denoted as <span class="math inline">\(y^{(k)}, \lambda^{(k)}\)</span>.</p>
+<p>Step 2: Check the convergence. The upper bound is given by the subproblem: <span class="math display">\[
+U^{(k)} = \sum_{i=1}^n c_i x_i^{(k)} + \sum_{j=1}^m d_j y_j^{(k)}
+\]</span></p>
+<p>While the lower bound is given by the master problem: <span class="math display">\[
+L^{(k)} = \sum_{i=1}^n c_i x_i^{(k)} + \alpha^{(k)}
+\]</span></p>
+<p>The gap is defined as: <span class="math display">\[
+U^{(k)} - L^{(k)} = \sum_{j=1}^m d_j y_j^{(k)} - \alpha^{(k)}
+\]</span></p>
+<p>If the gap is small enough, stop. Otherwise, update <span class="math inline">\(k = k + 1\)</span> and go to Step 3.</p>
+<p>Step 3: Update the master problem: <span class="math display">\[
+\begin{aligned}
+\min_{x,\alpha} &amp; \quad \sum_{i=1}^n c_i x_i + \alpha \\
+\text{s.t.} &amp; \quad 0 \leq x_i \leq x_i^{up}, \quad i=1,\ldots,n \\
+&amp; \quad \alpha \geq \sum_{j=1}^m d_j y_j^{(v)} + \sum_{i=1}^n \lambda_i^{(v)} (x_i - x_i^{(v)}), \quad v = 1, \cdots, k-1 \\
+&amp; \quad \alpha \geq \alpha^{down}
 \end{aligned}
 \]</span></p>
-<p>In Boyd’s book, the constraint qualification is defined as</p>
-<blockquote class="blockquote">
-<p>There are many results that establish conditions on the problem, beyond convexity, under which <strong>strong duality</strong> holds. These conditions are called constraint qualiﬁcations.</p>
-</blockquote>
-<p>A commonly used QC for convex optimization is the <em>Slater’s condition</em>: There exists <span class="math inline">\(x\in \text{relient}\mathcal{X}\)</span> such that <span class="math inline">\(h_i(x)&lt;0\)</span> for all <span class="math inline">\(i=1,\cdots,p\)</span> and <span class="math inline">\(Ax = b\)</span>. Slator’s condition statet that for convex optimization, the strong duality holds if the Slater’s condition holds.</p>
-<p>Then back to the necessary condition, for convex problem, if the slator condition holds, the strong duality condition holds, the KKT condition <a href="#eq-KKT" class="quarto-xref">Equation&nbsp;1</a> must be satisfied.</p>
-<p>For the sufficiency, for convex optimization problem, the KKT condition is sufficient for (primal and dual) optimality. I.e., any pair of <span class="math inline">\(\tilde{x}, \tilde{\lambda}, \tilde{\nu}\)</span> is primal and dual optimal.</p>
-<p>With the Slator’s condition, the KKT condition is both necessary and sufficient for (primal and dual) optimality (zero-duality gap).</p>
+<p>Note that all the previous lower bounds (bender’s cut) are included. Therefore, the size of the master problem becomes larger. Go to step 1.</p>
+</section>
+<section id="dealing-with-the-infeasibility" class="level3">
+<h3 class="anchored" data-anchor-id="dealing-with-the-infeasibility">Dealing with the Infeasibility</h3>
+<p>The subproblem <a href="#eq-subproblem" class="quarto-xref">Equation&nbsp;3</a> may be infeasible due to the constraints on <span class="math inline">\(x_i\)</span>. Therefore, a slack variable <span class="math inline">\(s_i \geq 0\)</span> is introduced: <span class="math display">\[
+\begin{aligned}
+\min_{y,s} &amp; \quad \sum_{j=1}^m d_j y_j + M \sum_{i=1}^n s_i \\
+\text{s.t.} &amp; \quad \sum_{j=1}^m b_{lj} y_j \leq b^{(l)} - \sum_{i=1}^n a_{li} x_i + s_i, \quad l=1,\ldots,q \\
+&amp; \quad 0 \leq y_j \leq y_j^{up}, \quad j=1,\ldots,m \\
+&amp; \quad s_i \geq 0, \quad i=1,\ldots,n
+\end{aligned}
+\]</span> where <span class="math inline">\(M\)</span> is a large number.</p>
+<p>Note that this is equivalent to adding the slack variable to the original LP <a href="#eq-LP" class="quarto-xref">Equation&nbsp;1</a> and group <span class="math inline">\(s\)</span> into the subproblem.</p>
+</section>
+</section>
+<section id="benders-decomposition-for-milp" class="level2">
+<h2 class="anchored" data-anchor-id="benders-decomposition-for-milp">Bender’s Decomposition for MILP</h2>
+<p>The algorithm for MILP is very similar to LP. If <span class="math inline">\(x\)</span> is a set of integer variables (<span class="math inline">\(x_i\in\mathbb{N}\)</span>), then treating <span class="math inline">\(x\)</span> as complicating variable results in a simple MILP master problem (as lower bound, note that the <span class="math inline">\(\alpha\)</span> is included in the master problem as continuous variable) and a LP subproblem (as upper bound).</p>
 
 
 </section>

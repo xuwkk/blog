@@ -183,7 +183,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">June 15, 2024</p>
+        <p class="date-modified">August 5, 2024</p>
       </div>
     </div>
       
@@ -242,21 +242,21 @@ h(z,x)
 \]</span> where <span class="math inline">\(\circ\)</span> denotes the element-wise product.</p>
 <p>Assume that the optimal primal and dual pair has been found by the <strong>forward pass</strong>. At the optimal point, we have <span class="math display">\[
 G(z^\star(x), \lambda^\star(x), \nu^\star(x), x) = 0
-\]</span></p>
+\]</span> which is an implicit function of <span class="math inline">\(x\)</span>.</p>
 <section id="general-formulation" class="level3">
 <h3 class="anchored" data-anchor-id="general-formulation">General Formulation</h3>
 <p>Denote <span class="math inline">\(y(x) = (z^\star(x), \lambda^\star(x), \nu^\star(x))\)</span>, then we can directly use the method implemented in <a href="../../../posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html">nonlinear equation sensitivity analysis</a> to compute the gradient of <span class="math inline">\(y(x)\)</span> with respect to <span class="math inline">\(x\)</span>. Do the <strong>total derivative</strong> with respect to <span class="math inline">\(x\)</span>: <span class="math display">\[
 \frac{d G}{d x} = \frac{\partial G}{\partial y}\frac{d y}{d x} + \frac{\partial G}{\partial x} = 0
 \]</span></p>
-<p>Therefore, the Jacobian is found as <span class="math display">\[
+<p>Therefore, the Jacobian of the decision <span class="math inline">\(y\)</span> with respect to the input <span class="math inline">\(x\)</span> is found as <span class="math display">\[
 \frac{d y}{d x} = -\left(\frac{\partial G}{\partial y}\right)^{-1} \frac{\partial G}{\partial x}
 \]</span></p>
-<p>In the backward pass, the adjoint of the optimal point <span class="math inline">\(\dot{y}\)</span> is computed backpropagated by the scalar loss <span class="math inline">\(\ell(\cdot)\)</span> as <span class="math inline">\(\dot{y} = \frac{\partial \ell}{\partial y}\)</span>. Note that when <span class="math inline">\(\ell(\cdot)\)</span> does not depend on the primal and dual variables, the associated adjoint is zero.</p>
+<p>In the backward pass, the adjoint of the optimal point (denote as <span class="math inline">\(\dot{y}\)</span>) is computed backpropagated by the scalar loss <span class="math inline">\(\ell(\cdot)\)</span> as <span class="math inline">\(\dot{y} = \frac{\partial \ell}{\partial y}\)</span>. Note that when <span class="math inline">\(\ell(\cdot)\)</span> does not depend on the primal and dual variables, the associated adjoint is zero.</p>
 <p>Consequently, <span class="math display">\[
 \frac{d y}{d x} = - \frac{d \ell}{d y} \left(\frac{\partial G}{\partial y}\right)^{-1} \frac{\partial G}{\partial x}
 \]</span></p>
 <p>The same treatment as in <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> can be used to compute the above gradient. In detail, the first two items form the adjoint equation of <span class="math inline">\(y\)</span> whose adjoint (or gradient) needs to be modified. <span id="eq-adjoint"><span class="math display">\[
-\left(\frac{\partial G}{\partial y}\right)^T \dot{y} = \frac{\partial G}{\partial x}
+\left(\frac{\partial G}{\partial y}\right)^T \dot{y} = -\frac{\partial \ell}{\partial y}
 \tag{1}\]</span></span></p>
 </section>
 <section id="detailed-formulation" class="level3">
@@ -272,7 +272,7 @@ G(z^\star(x), \lambda^\star(x), \nu^\star(x), x) = 0
 </section>
 <section id="quadratic-programming-formulation" class="level3">
 <h3 class="anchored" data-anchor-id="quadratic-programming-formulation">Quadratic Programming Formulation</h3>
-<p>In the <a href="https://arxiv.org/abs/1703.00443">OptNet paper</a>, the author implemented the differentiable QP layer. In this section, the explicit formulations are derived. We will follow the same notation in the</p>
+<p>In the <a href="https://arxiv.org/abs/1703.00443">OptNet paper</a>, the author implemented the differentiable QP layer. In this section, the explicit formulations are derived. We will follow the same notation in this paper.</p>
 <p>Consider the following QP problem: <span class="math display">\[
 \begin{aligned}
 \min_z &amp; \quad \frac{1}{2} z^T Q z + q^T z \\
@@ -291,7 +291,7 @@ D(\lambda^\star) (Gz^\star - h) &amp;= 0
 \begin{aligned}
 \frac{dQ}{dz_i}z^\star + Q\frac{dz^\star}{dz_i} + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + A^T \frac{d\nu^\star}{dz_i} + \frac{dG^T}{dz_i}\lambda^\star + G^T \frac{d\lambda^\star}{dz_i} &amp;= 0 \\
 \frac{dA}{dz_i}z^\star + A\frac{dz^\star}{dz_i} - \frac{db}{dz_i} &amp;= 0 \\
-D(Gz^\star - h)\frac{dz^\star}{dz_i} + D(\lambda^\star)\left(\frac{dG}{dz_i}z^\star + G\frac{dz^\star}{dz_i} - \frac{dh}{dz_i} \right) &amp;=0
+D(Gz^\star - h)\frac{d\lambda^\star}{dz_i} + D(\lambda^\star)\left(\frac{dG}{dz_i}z^\star + G\frac{dz^\star}{dz_i} - \frac{dh}{dz_i} \right) &amp;=0
 \end{aligned}
 \]</span> which can be compactly written as matrix form <span class="math display">\[
 \begin{bmatrix}
@@ -301,6 +301,21 @@ A &amp; 0 &amp; 0
 \end{bmatrix} \begin{bmatrix} \frac{dz}{dz_i} \\ \frac{d\lambda}{dz_i} \\ \frac{d\nu}{dz_i} \end{bmatrix} = -\begin{bmatrix} \frac{dQ}{dz_i}z^\star + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + \frac{dG^T}{dz_i}\lambda \\ D(\lambda^\star)\frac{dG}{dz_i}z^\star - D(\lambda^\star)\frac{dh}{dz_i} \\ \frac{dA}{dz_i}z - \frac{db}{dz_i} \end{bmatrix}
 \]</span></p>
 <p>The paper also suggest using the adjoint method to compute the gradient of the loss with respect to the input <span class="math inline">\(z_i\)</span>.</p>
+<p>In most cases, <span class="math inline">\(\ell\)</span> is not dependent on <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\nu\)</span>, so the adjoint equation (after transpose) is <span class="math display">\[
+\dot{y} = \left[\begin{array}{l}
+d_z \\
+d_\lambda \\
+d_\nu
+\end{array}\right]=\left[\begin{array}{ccc}
+Q &amp; G^T D\left(\lambda^{\star}\right) &amp; A^T \\
+G &amp; D\left(G z^{\star}-h\right) &amp; 0 \\
+A &amp; 0 &amp; 0
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\left(\frac{\partial \ell}{\partial z^{\star}}\right)^T \\
+0 \\
+0
+\end{array}\right]
+\]</span></p>
 <p>The paper also finds out that the above matrix (that needs to be inverted when solving the adjoint equation) has been already computed/factorized during the forward pass using the interior point method. Therefore, the computational cost of backpropagation is ‘almost free’. This finding is similar to the <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> where the Jacobian of the fixed point iteration is already computed during the forward pass using the Newton’s method.</p>
 </section>
 <section id="steps" class="level3">

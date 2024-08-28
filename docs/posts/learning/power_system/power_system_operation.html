@@ -218,6 +218,7 @@ window.Quarto = {
 <ul>
 <li><span class="math inline">\(z_s = r_s + jx_s\)</span>: series impedance.</li>
 <li><span class="math inline">\(\tau, \theta_{\text{shift}}\)</span>: transformer tap ratio magnitude and phase angle (in radians). The transformer is located at the from bus on a branch. If there is no transformer, <span class="math inline">\(\tau = 1\)</span> and <span class="math inline">\(\theta_{\text{shift}} = 0\)</span>.</li>
+<li><span class="math inline">\(b_s\)</span>: total charging susceptance.</li>
 </ul>
 <p>For a single branch, <span class="math display">\[
 \left[\begin{array}{l}
@@ -261,7 +262,7 @@ S_d = P_d + jQ_d
 </section>
 <section id="shunt-elements" class="level3">
 <h3 class="anchored" data-anchor-id="shunt-elements">Shunt Elements</h3>
-<p>A shunt=connected element, such as a capacitor or an inductor, is modeled as a fixed impedance to ground at a <strong>bus</strong>, whose admittance is <span class="math display">\[
+<p>A shunt-connected element, such as a capacitor or an inductor, is modeled as a fixed impedance to ground at a <strong>bus</strong>, whose admittance is <span class="math display">\[
 Y_{sh} = G_{sh} + jB_{sh}
 \]</span></p>
 </section>

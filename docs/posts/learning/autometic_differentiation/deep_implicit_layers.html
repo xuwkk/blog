@@ -291,7 +291,7 @@ z:= z - \left(\frac{\partial g}{\partial z}\right)^{-1} g(x,z)
 <p>The Jacobian <span class="math inline">\(\frac{d z}{d x}\)</span> can be found as <span class="math display">\[
 \frac{d z}{d x} = -\left(\frac{\partial g}{\partial z}\right)^{-1} \frac{\partial g}{\partial x}
 \]</span></p>
-<p>Note that the term <span class="math inline">\(\frac{\partial g}{\partial x}\)</span> has already been computed in the forward pass, e.g.&nbsp;we can directly use the Jacobian and its inverse calculated in the last iteration of Newton’s method.</p>
+<p>Note that the term <span class="math inline">\(\frac{\partial g}{\partial z}\)</span> has already been computed in the forward pass, e.g.&nbsp;we can directly use the Jacobian and its inverse calculated in the last iteration of Newton’s method.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -314,7 +314,10 @@ Tip
 \tag{1}\]</span></span></p>
 <p>Then we need to re-engage <span class="math inline">\(x\)</span> on the computational graph. This can be done by calculating <span class="math display">\[
 z:= z - g(x,z)
-\]</span> whose gradient with respect to <span class="math inline">\(x\)</span> is <span class="math inline">\(-\frac{\partial g}{\partial x}\)</span>, which is the last term in <span class="math inline">\(\frac{d\ell}{dx}\)</span>.</p>
+\]</span> whose gradient with respect to <span class="math inline">\(x\)</span> is <span class="math inline">\(-\frac{\partial g}{\partial x}\)</span>, which is the last term in <span class="math inline">\(\frac{d\ell}{dx}\)</span>:</p>
+<p><span class="math display">\[
+\frac{dz}{dx} = -\frac{\partial g}{\partial x}
+\]</span></p>
 <p>(The minus sign depends how the adjoint system is defined.)</p>
 <p>To sum up, the process of forward and backward pass of fixed-point iteration is</p>
 <ol type="1">

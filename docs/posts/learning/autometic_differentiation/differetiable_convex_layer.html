@@ -183,7 +183,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">August 13, 2024</p>
+        <p class="date-modified">September 3, 2024</p>
       </div>
     </div>
       
@@ -245,6 +245,7 @@ G(z^\star(x), \lambda^\star(x), \nu^\star(x), x) = 0
 \]</span> which is an implicit function of <span class="math inline">\(x\)</span>.</p>
 <section id="general-formulation" class="level3">
 <h3 class="anchored" data-anchor-id="general-formulation">General Formulation</h3>
+<p>The KKT condition is exactly the implicit function defined in the <a href="posts/learning/autometic_differentiation/deep_implicit_layers.qmd">deep equilibrium model (DEQ)</a> (We will also show that the interrior-point method, which is basically the Newton’s method, can be used to solve the KKT condition later).</p>
 <p>Denote <span class="math inline">\(y(x) = (z^\star(x), \lambda^\star(x), \nu^\star(x))\)</span>, then we can directly use the method implemented in <a href="../../../posts/learning/autometic_differentiation/adjoint_nonlinear_equation.html">nonlinear equation sensitivity analysis</a> to compute the gradient of <span class="math inline">\(y(x)\)</span> with respect to <span class="math inline">\(x\)</span>. Do the <strong>total derivative</strong> with respect to <span class="math inline">\(x\)</span>: <span class="math display">\[
 \frac{d G}{d x} = \frac{\partial G}{\partial y}\frac{d y}{d x} + \frac{\partial G}{\partial x} = 0
 \]</span></p>
@@ -282,12 +283,19 @@ G(z^\star(x), \lambda^\star(x), \nu^\star(x), x) = 0
 \]</span> where the parameters <span class="math inline">\(Q, q, A, b, C, h\)</span> are functions of the input <span class="math inline">\(z_i\)</span> (the term <span class="math inline">\(z_i\)</span> is used as in the paper this is referred to the output from the previous layer). Our goal is to compute the Jacobian of <span class="math inline">\(\frac{d \ell}{d z_i}\)</span>.</p>
 <p>The KKT condition (only the equality part) of the above QP can be written as <span class="math display">\[
 \begin{aligned}
-Qz^\star + q + A^T \nu^\star + C^T \lambda^\star &amp;= 0 \\
+Qz^\star + q + A^T \nu^\star + G^T \lambda^\star &amp;= 0 \\
 Az^\star - b &amp;= 0 \\
 D(\lambda^\star) (Gz^\star - h) &amp;= 0
 \end{aligned}
 \]</span> where <span class="math inline">\(D(\lambda^\star)\)</span> is a diagonal matrix with the diagonal elements being <span class="math inline">\(\lambda^\star\)</span>.</p>
-<p>Differentiating the KKT equations with respect to the input <span class="math inline">\(z_i\)</span> gives <span class="math display">\[
+<p>Compactly, it is written as <span class="math display">\[
+\begin{bmatrix}
+Q &amp; G^T &amp; A^T \\
+D(\lambda^\star)G &amp; D(Gz^\star - h) &amp; 0 \\
+A &amp; 0 &amp; 0
+\end{bmatrix} \begin{bmatrix} z^\star \\ \lambda^\star \\ \nu^\star \end{bmatrix} = \begin{bmatrix} -q \\ 0 \\ b \end{bmatrix}
+\]</span></p>
+<p>Differentiating the KKT equations with respect to the input <span class="math inline">\(z_i\)</span> gives (it is assumed that all parameters are dependent on <span class="math inline">\(z_i\)</span>): <span class="math display">\[
 \begin{aligned}
 \frac{dQ}{dz_i}z^\star + Q\frac{dz^\star}{dz_i} + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + A^T \frac{d\nu^\star}{dz_i} + \frac{dG^T}{dz_i}\lambda^\star + G^T \frac{d\lambda^\star}{dz_i} &amp;= 0 \\
 \frac{dA}{dz_i}z^\star + A\frac{dz^\star}{dz_i} - \frac{db}{dz_i} &amp;= 0 \\
@@ -300,13 +308,12 @@ D(\lambda^\star)G &amp; D(Gz^\star - h) &amp; 0 \\
 A &amp; 0 &amp; 0
 \end{bmatrix} \begin{bmatrix} \frac{dz}{dz_i} \\ \frac{d\lambda}{dz_i} \\ \frac{d\nu}{dz_i} \end{bmatrix} = -\begin{bmatrix} \frac{dQ}{dz_i}z^\star + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + \frac{dG^T}{dz_i}\lambda \\ D(\lambda^\star)\frac{dG}{dz_i}z^\star - D(\lambda^\star)\frac{dh}{dz_i} \\ \frac{dA}{dz_i}z - \frac{db}{dz_i} \end{bmatrix}
 \]</span></p>
-<p>The paper also suggest using the adjoint method to compute the gradient of the loss with respect to the input <span class="math inline">\(z_i\)</span>.</p>
-<p>In most cases, <span class="math inline">\(\ell\)</span> is not dependent on <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\nu\)</span>, so the adjoint equation (after transpose) is <span class="math display">\[
+<p>The paper also suggest using the adjoint method to compute the gradient of the loss with respect to the input <span class="math inline">\(z_i\)</span>. For example, in most cases, <span class="math inline">\(\ell\)</span> is not dependent on <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\nu\)</span>, so the adjoint equation (after transpose) is <span class="math display">\[
 \dot{y} = \left[\begin{array}{l}
 d_z \\
 d_\lambda \\
 d_\nu
-\end{array}\right]=\left[\begin{array}{ccc}
+\end{array}\right]= - \left[\begin{array}{ccc}
 Q &amp; G^T D\left(\lambda^{\star}\right) &amp; A^T \\
 G &amp; D\left(G z^{\star}-h\right) &amp; 0 \\
 A &amp; 0 &amp; 0
@@ -316,6 +323,62 @@ A &amp; 0 &amp; 0
 0
 \end{array}\right]
 \]</span></p>
+<p><strong>Derive eq.(8) in the paper</strong> requires matrix differentiation. For instance, we can obtain <span class="math inline">\(\frac{d\ell}{dA} = \frac{d\ell}{dz} \frac{dz}{dA}\)</span> by differentiating the KKT condition with respect to <span class="math inline">\(A\)</span>.</p>
+</section>
+<section id="efficient-forward-and-backward-pass" class="level3">
+<h3 class="anchored" data-anchor-id="efficient-forward-and-backward-pass">Efficient Forward and Backward Pass</h3>
+<p>Today’s state-of-the-art QP solvers like Gurobi and CPLEX do not have the capability of solving multiple optimization problems on the <strong>GPU</strong> in parallel across the entire <strong>minibatch</strong>.</p>
+<p>The paper develops a GPU-based primal-dual interior point method (PDIPM). It considers the following QP with slack variables <span class="math inline">\(s\)</span>: <span class="math display">\[
+\begin{aligned}
+\min_{z, s} &amp; \quad \frac{1}{2} z^T Q z + q^T z \\
+\text{s.t.} &amp; \quad A z = b \\
+&amp; \quad G z + s = h \\
+&amp; \quad s \geq 0
+\end{aligned}
+\]</span></p>
+<p>Then the KKT condition can be written as <span class="math display">\[
+\begin{aligned}
+Qz + q + A^T \nu + G^T \lambda &amp;= 0 \\
+Az - b &amp;= 0 \\
+Gz + s - h &amp;= 0 \\
+\lambda \circ s &amp;= 0
+\end{aligned}
+\]</span></p>
+<p>The last condition is exactly the complementarity slackness.</p>
+<p>A Newton’s method can be used to solve the above system, with some modification, it can becomes the PDIPM.</p>
+<p>Taking the first-order expansion of the KKT condition, we have <span class="math display">\[
+K\left[\begin{array}{c}
+\Delta z^{\text {aff }} \\
+\Delta s^{\text {aff }} \\
+\Delta \lambda^{\text {aff }} \\
+\Delta \nu^{\text {aff }}
+\end{array}\right]=\left[\begin{array}{c}
+-\left(A^T \nu+G^T \lambda+Q z+q\right) \\
+-S \lambda \\
+-(G z+s-h) \\
+-(A z-b)
+\end{array}\right]
+\]</span> where <span class="math display">\[
+K=\left[\begin{array}{cccc}
+Q &amp; 0 &amp; G^T &amp; A^T \\
+0 &amp; D(\lambda) &amp; D(s) &amp; 0 \\
+G &amp; I &amp; 0 &amp; 0 \\
+A &amp; 0 &amp; 0 &amp; 0
+\end{array}\right]
+\]</span></p>
+<p>The solution (with some modification) will becomes the update direction.</p>
+<p>There are several modifications that can be made to improve the efficiency of the PDIPM. First, a symmetric KKT matrix can be used that can be easily solved, by scaling the second block equation by <span class="math inline">\(D(1/S)\)</span>. Then the second block row becomes <span class="math display">\[
+D(\lambda/S) \Delta s^{\text {aff }} + \Delta \lambda^{\text {aff }} = - \lambda
+\]</span> and <span class="math display">\[
+K_{sym} = \left[\begin{array}{cccc}
+Q &amp; 0 &amp; G^T &amp; A^T \\
+0 &amp; D(\lambda/S) &amp; I &amp; 0 \\
+G &amp; I &amp; 0 &amp; 0 \\
+A &amp; 0 &amp; 0 &amp; 0
+\end{array}\right]
+\]</span> which is symmetric.</p>
+<p>Second, as the PDIPM requires to solve linear system during the iteration, the paper uses the block factorization technique and pre-factorize portions of them that don’t change during the iteration.</p>
+<p>Third, because the KKT condition represents a nonlinear implicit function, the backpropagation can be found by the implicit function theorem,</p>
 <p>The paper also finds out that the above matrix (that needs to be inverted when solving the adjoint equation) has been already computed/factorized during the forward pass using the interior point method. Therefore, the computational cost of backpropagation is ‘almost free’. This finding is similar to the <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> where the Jacobian of the fixed point iteration is already computed during the forward pass using the Newton’s method.</p>
 </section>
 <section id="steps" class="level3">

@@ -188,7 +188,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">September 3, 2024</p>
+        <p class="date-modified">September 28, 2024</p>
       </div>
     </div>
       
@@ -293,14 +293,15 @@ Az^\star - b &amp;= 0 \\
 D(\lambda^\star) (Gz^\star - h) &amp;= 0
 \end{aligned}
 \]</span> where <span class="math inline">\(D(\lambda^\star)\)</span> is a diagonal matrix with the diagonal elements being <span class="math inline">\(\lambda^\star\)</span>.</p>
-<p>Compactly, it is written as <span class="math display">\[
+<!-- Compactly, it is written as
+$$
 \begin{bmatrix}
-Q &amp; G^T &amp; A^T \\
-D(\lambda^\star)G &amp; D(Gz^\star - h) &amp; 0 \\
-A &amp; 0 &amp; 0
+Q & G^T & A^T \\
+D(\lambda^\star)G & D(Gz^\star - h) & 0 \\
+A & 0 & 0 
 \end{bmatrix} \begin{bmatrix} z^\star \\ \lambda^\star \\ \nu^\star \end{bmatrix} = \begin{bmatrix} -q \\ 0 \\ b \end{bmatrix}
-\]</span></p>
-<p>Differentiating the KKT equations with respect to the input <span class="math inline">\(z_i\)</span> gives (it is assumed that all parameters are dependent on <span class="math inline">\(z_i\)</span>): <span class="math display">\[
+$$ -->
+<p>Differentiating the KKT equations (this is TOTAL derivative!) with respect to the input <span class="math inline">\(z_i\)</span> gives (it is assumed that all parameters are dependent on <span class="math inline">\(z_i\)</span>): <span class="math display">\[
 \begin{aligned}
 \frac{dQ}{dz_i}z^\star + Q\frac{dz^\star}{dz_i} + \frac{dq}{dz_i} + \frac{dA^T}{dz_i}\nu^\star + A^T \frac{d\nu^\star}{dz_i} + \frac{dG^T}{dz_i}\lambda^\star + G^T \frac{d\lambda^\star}{dz_i} &amp;= 0 \\
 \frac{dA}{dz_i}z^\star + A\frac{dz^\star}{dz_i} - \frac{db}{dz_i} &amp;= 0 \\

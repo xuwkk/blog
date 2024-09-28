@@ -142,6 +142,11 @@ window.Quarto = {
 </i> 
 <span class="menu-text"></span></a>
   </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -378,8 +383,7 @@ A &amp; 0 &amp; 0 &amp; 0
 \end{array}\right]
 \]</span> which is symmetric.</p>
 <p>Second, as the PDIPM requires to solve linear system during the iteration, the paper uses the block factorization technique and pre-factorize portions of them that don’t change during the iteration.</p>
-<p>Third, because the KKT condition represents a nonlinear implicit function, the backpropagation can be found by the implicit function theorem,</p>
-<p>The paper also finds out that the above matrix (that needs to be inverted when solving the adjoint equation) has been already computed/factorized during the forward pass using the interior point method. Therefore, the computational cost of backpropagation is ‘almost free’. This finding is similar to the <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> where the Jacobian of the fixed point iteration is already computed during the forward pass using the Newton’s method.</p>
+<p>Third, because the KKT condition represents a nonlinear implicit function, the backpropagation can be found by the implicit function theorem. The paper also finds out that the above matrix (that needs to be inverted when solving the adjoint equation) has been already computed/factorized during the forward pass using the interior point method. Therefore, the computational cost of backpropagation is ‘almost free’. This finding is similar to the <a href="../../../posts/learning/autometic_differentiation/deep_implicit_layers.html">fixed point iteration</a> where the Jacobian of the fixed point iteration is already computed during the forward pass using the Newton’s method.</p>
 </section>
 <section id="steps" class="level3">
 <h3 class="anchored" data-anchor-id="steps">Steps</h3>
@@ -491,7 +495,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/xuwkk\.github\.io\/blog\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

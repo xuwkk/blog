@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Wangkun Xu">
-<meta name="dcterms.date" content="2024-05-31">
+<meta name="dcterms.date" content="2024-09-04">
 
-<title>Wangkun's Blog – Welcome To My Blog</title>
+<title>Wangkun's Blog – ADMM: the OSQP Solver Explained!</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,25 +22,59 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,8 +112,37 @@ gtag('js', new Date());
 gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="../../styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -89,7 +152,7 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Wangkun’s Blog</span>
     </a>
   </div>
@@ -100,7 +163,7 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -114,7 +177,7 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -129,9 +192,9 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Welcome To My Blog</h1>
+      <h1 class="title">ADMM: the OSQP Solver Explained!</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">News</div>
+                <div class="quarto-category">Optimization</div>
               </div>
                   </div>
   </div>
@@ -149,10 +212,16 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 31, 2024</p>
+        <p class="date">September 4, 2024</p>
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">September 28, 2024</p>
+      </div>
+    </div>
       
     </div>
     
@@ -168,9 +237,183 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 
 
 
-<p>This is the first post of my blog. I will regularly update my learning note and research outcomes at this website.</p>
+<p>This post introduces the OSQP solver, which is an operatir splitting solver for quadratic programs. The original paper is <em>Stellato, Bartolomeo, et al.&nbsp;“OSQP: An operator splitting solver for quadratic programs.” Mathematical Programming Computation 12.4 (2020): 637-672.</em>. We also borrow the basic idea from the ADMM review <em>Boyd, Stephen, et al.&nbsp;“Distributed optimization and statistical learning via the alternating direction method of multipliers.” Foundations and Trends® in Machine learning 3.1 (2011): 1-122.</em>.</p>
+<p>There are many features of the OSQP, compared to other ADMM-based algorithms. For example,</p>
+<ol type="1">
+<li>The algorithm does <strong>not</strong> require on the problem data such as positive definiteness of the objective function or LICQ condition of the constraints, meaning that the algorithm is applicable to the entire class of convex quadratic programs.</li>
+<li>The algorithm requires the solution of a quasi-definite linear system with the same coefficient matrix at almost every iteration, which is very efficient. (usually ten times faster than interior-point methods.)</li>
+<li>The method also supports factorization caching and warm starting, making it suitable for <em>parametric programming</em>.</li>
+</ol>
+<p>In contrast, the interior-point methods are not easily warm started and do not scale well for very large problems. ADMM, instead, has been shown to reliably provide <strong>modest accurate</strong> solutions to QPs in a relatively small number of computationally inexpensive iterations.</p>
+<p>The drawback of ADMM (or any other first-order method) is that its convergence is highly dependent on the choice of step-size parameter and the problem data.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The OSQP considers the following QP problem, <span class="math display">\[
+\begin{array}{ll}
+\operatorname{minimize} &amp; (1 / 2) x^T P x+q^T x \\
+\text { subject to } &amp; l \leq A x \leq u,
+\end{array}
+\]</span> where <span class="math inline">\(P \in \mathbb{S}^{n}_{+}\)</span>, <span class="math inline">\(q \in \mathbb{R}^{n}\)</span>, <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span>, <span class="math inline">\(l \in \mathbb{R}^{m} \cup -\infty^m\)</span>, and <span class="math inline">\(u \in \mathbb{R}^{m} \cup \infty^m\)</span>. Note that the linear programming can be considered as a special case with <span class="math inline">\(P=0\)</span>.</p>
+<p>Equivalently, the problem can be rewritten by introducing the slack variables <span class="math inline">\(z\)</span> <span class="math display">\[
+\begin{array}{ll}
+\operatorname{minimize} &amp; (1 / 2) x^T P x+q^T x \\
+\text { subject to } &amp; A x=z \\
+&amp; l \leq z \leq u
+\end{array}
+\]</span></p>
+<section id="optimal-condition" class="level3">
+<h3 class="anchored" data-anchor-id="optimal-condition">Optimal Condition</h3>
+The KKT condition of the original problem is $$
+<span class="math display">\[\begin{aligned}
+Px + q + A^T y^u - A^T y^l &amp; = 0 \\
+Ax - u &amp; \leq 0 \\
+-Ax + l &amp; \leq 0 \\
+y^u \circ (Ax - u) &amp; = 0 \\
+y^l \circ (-Ax + l) &amp; = 0 \\
+y^u &amp; \geq 0 \\
+y^l &amp; \geq 0
+\end{aligned}\]</span>
+<p>where <span class="math inline">\(y^u\)</span> and <span class="math inline">\(y^l\)</span> are the dual variables associated with the upper and lower constraints.</p>
+<p>Now let <span class="math inline">\(y=y^u - y^l\)</span> and let <span class="math inline">\(Ax = z\)</span>. The first KKT condition becomes <span class="math inline">\(Px + q +A^Ty = 0\)</span>. The second and third conditions becomes <span class="math inline">\(l \leq z \leq u\)</span>. Moreover, when <span class="math inline">\(y^u_i &gt; 0\)</span>, we have <span class="math inline">\(A_ix=u_i\)</span>. Then if at the same time <span class="math inline">\(y^l_i &gt; 0\)</span>, we have <span class="math inline">\(A_ix=l_i\)</span>, which means that <span class="math inline">\(y^l_i=y_i^u\)</span>, e.g., an equality constraint. Otherwise, we must have <span class="math inline">\(y^l=0\)</span>. Concequentlty, the complementary slackness conditions become <span class="math inline">\(y_+^T\circ(z-u)=0\)</span> and <span class="math inline">\(y_-^T\circ(z-l)=0\)</span>. To sum up, the KKT condition can be rewritten as <span class="math display">\[
+\begin{aligned}
+Px + q + A^Ty = 0 \\
+Ax = z \\
+l \leq z \leq u \\
+y_+ \circ (z-u) = 0 \\
+y_- \circ (z-l) = 0 \\
+\end{aligned}
+\]</span> where <span class="math inline">\(y\)</span> be the slack variable for the equality constraint.</p>
+<p>Moreover, we can define the primal and dual residuals as <span class="math display">\[
+\begin{aligned}
+r_{\text {prim }} &amp; =A x-z \\
+r_{\text {dual }} &amp; =P x+q+A^T y
+\end{aligned}
+\]</span></p>
+</section>
+</section>
+<section id="solution-with-admm" class="level2">
+<h2 class="anchored" data-anchor-id="solution-with-admm">Solution with ADMM</h2>
+<p>By introducing auxiliary variables <span class="math inline">\(\tilde{x}\in\mathbb{R}^n\)</span> and <span class="math inline">\(\tilde{z}\in\mathbb{R}^m\)</span>, we can have an equivalent problem, <span class="math display">\[
+\begin{array}{ll}
+\operatorname{minimize} &amp; (1 / 2) f(\tilde{x},\tilde{z}) + \mathcal{I}_\mathcal{C}(z) \\
+\text{ subject to } &amp; (\tilde{x},\tilde{z}) = (x,z)
+\end{array}
+\]</span> where <span class="math inline">\(f(\tilde{x},\tilde{z}) = \tilde{x}^T P \tilde{x} + q^T \tilde{x}\)</span> with domain <span class="math inline">\(\operatorname{dom} f = \{(\tilde{x},\tilde{z}):A\tilde{x} = \tilde{z}\}\)</span> and the indicator function <span class="math display">\[
+\mathcal{I}_{\mathcal{C}}(z)= \begin{cases}0 &amp; z \in \mathcal{C} \\ +\infty &amp; \text { otherwise }\end{cases}
+\]</span></p>
+<p>Similar to the standard ADMM, we can view <span class="math inline">\(\tilde{x}\)</span> and <span class="math inline">\(\tilde{z}\)</span> as the primal variables, and <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> as the slack variables. Therefore, the first step is to update <span class="math inline">\(\tilde{x}\)</span> and <span class="math inline">\(\tilde{z}\)</span>. The second step is to update <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span>. Both by minimising the Augmented Lagrangian function. The third step is to update the dual variable <span class="math inline">\(y\)</span>.</p>
+<p>In detail, the unscaled ADMM algorithm is as follows, <span class="math display">\[
+\begin{aligned}
+&amp;\left(\tilde{x}^{k+1}, \tilde{z}^{k+1}\right) \leftarrow \underset{(\tilde{x}, \tilde{z}): A \tilde{x}=\tilde{z}}{\operatorname{argmin}}(1 / 2) \tilde{x}^T P \tilde{x}+q^T \tilde{x} \\
+&amp;+(\sigma / 2)\left\|\tilde{x}-x^k+\sigma^{-1} w^k\right\|_2^2+(\rho / 2)\left\|\tilde{z}-z^k+\rho^{-1} y^k\right\|_2^2
+\end{aligned}
+\]</span> <span class="math display">\[
+x^{k+1} \leftarrow \alpha \tilde{x}^{k+1}+(1-\alpha) x^k+\sigma^{-1} w^k
+\]</span> <span class="math display">\[
+z^{k+1} \leftarrow \Pi\left(\alpha \tilde{z}^{k+1}+(1-\alpha) z^k+\rho^{-1} y^k\right)
+\]</span> <span class="math display">\[
+w^{k+1} \leftarrow w^k+\sigma\left(\alpha \tilde{x}^{k+1}+(1-\alpha) x^k-x^{k+1}\right)
+\]</span> <span class="math display">\[
+y^{k+1} \leftarrow y^k+\rho\left(\alpha \tilde{z}^{k+1}+(1-\alpha) z^k-z^{k+1}\right)
+\]</span> where</p>
+<ul>
+<li><span class="math inline">\(\sigma&gt;0\)</span> and <span class="math inline">\(\rho&gt;0\)</span> are the penalty/step parameters.</li>
+<li><span class="math inline">\(\alpha\in(0,2)\)</span> is the relaxation parameter.</li>
+<li><span class="math inline">\(\Pi\)</span> is the projection operator onto the feasible set <span class="math inline">\(\mathcal{C}\)</span>.</li>
+<li><span class="math inline">\((w^k,y^k)\)</span> are the dual variables associated with the <span class="math inline">\(\tilde{x} = x\)</span> and <span class="math inline">\(\tilde{z} = z\)</span> constraints.</li>
+<li>It can be derived <span class="math inline">\(w^{k+1}=0\)</span> for all <span class="math inline">\(k\geq0\)</span>. Therefore, the <span class="math inline">\(w\)</span> update can be omitted.</li>
+</ul>
+<section id="solving-the-linear-system" class="level3">
+<h3 class="anchored" data-anchor-id="solving-the-linear-system">Solving the linear system</h3>
+<p>The introduction of <span class="math inline">\(\tilde{x}\)</span> and <span class="math inline">\(\tilde{z}\)</span> ensures that the first update is always solvable even the when <span class="math inline">\(P=0\)</span> and <span class="math inline">\(A\)</span> is not full row rank (the LICQ consition does not hold).</p>
+<p>The <span class="math inline">\(\tilde{x},\tilde{z}\)</span> update is to solve a equality constrained QP, whose KKT condition is given as (note that <span class="math inline">\(w^k=0\)</span>): <span class="math display">\[
+\begin{aligned}
+P \tilde{x}^{k+1}+q+\sigma\left(\tilde{x}^{k+1}-x^k\right)+A^T v^{k+1} &amp; =0 \\
+\rho\left(\tilde{z}^{k+1}-z^k\right)+y^k-v^{k+1} &amp; =0 \\
+A \tilde{x}^{k+1}-\tilde{z}^{k+1} &amp; =0
+\end{aligned}
+\]</span> where <span class="math inline">\(v^{k+1}\)</span> is the dual variable associated with the equality constraint. Eliminating <span class="math inline">\(\tilde{z}^{k+1}\)</span> results in <span class="math display">\[
+\underbrace{\left[\begin{array}{cc}
+P+\sigma I &amp; A^T \\
+A &amp; -\rho^{-1} I
+\end{array}\right]}_{K}\left[\begin{array}{c}
+\tilde{x}^{k+1} \\
+v^{k+1}
+\end{array}\right]=\underbrace{\left[\begin{array}{c}
+\sigma x^k-q \\
+z^k-\rho^{-1} y^k
+\end{array}\right]}_{y}
+\]</span> and <span class="math display">\[
+\tilde{z}^{k+1}=z^k+\rho^{-1}\left(\nu^{k+1}-y^k\right)
+\]</span></p>
+<p>Note that <span class="math inline">\(K\)</span> is always invertible. For a given problem, if <span class="math inline">\(\rho\)</span> and <span class="math inline">\(\sigma\)</span> are unchanged during the iteration, we can factorize <span class="math inline">\(K\)</span> once and reuse the factorization at each iteration. For example, in pytorch,</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>LU, pivots <span class="op">=</span> torch.linalg.lu_factor(K)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.linalg.lu_solve(LU, pivots, b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>which significantly reduces the computational cost. For instance, the complexity of the factorization is <span class="math inline">\(O(n^3)\)</span>. In interior-point methods, this complexity is repeated at each iteration but in OSQP, we only need to factorize once (or when <span class="math inline">\(\rho\)</span> and <span class="math inline">\(\sigma\)</span> change).</p>
+</section>
+<section id="stopping-criterion" class="level3">
+<h3 class="anchored" data-anchor-id="stopping-criterion">Stopping criterion</h3>
+<p><span class="math display">\[
+\left\|r_{\text {prim }}^k\right\|_{\infty} \leq \varepsilon_{\text {prim }}, \quad\left\|r_{\text {dual }}^k\right\|_{\infty} \leq \varepsilon_{\text {dual }}
+\]</span> with <span class="math display">\[
+\begin{aligned}
+\varepsilon_{\text {prim }} &amp; =\varepsilon_{\text {abs }}+\varepsilon_{\text {rel }} \max \left\{\left\|A x^k\right\|_{\infty},\left\|z^k\right\|_{\infty}\right\} \\
+\varepsilon_{\text {dual }} &amp; =\varepsilon_{\text {abs }}+\varepsilon_{\text {rel }} \max \left\{\left\|P x^k\right\|_{\infty},\left\|A^T y^k\right\|_{\infty},\|q\|_{\infty}\right\}
+\end{aligned}
+\]</span></p>
+</section>
+</section>
+<section id="solution-polishing" class="level2">
+<h2 class="anchored" data-anchor-id="solution-polishing">Solution Polishing</h2>
+<p>Assume that the ‘less accurate’ solution <span class="math inline">\((x,y,z)\)</span> can correctly identify the active constraints, we can refine the solution by solving a new QP with known active constraints as equality constraints.</p>
+<p>Given the dual solution, we can define the set of lower- and upper-active constraints as <span class="math display">\[
+\begin{aligned}
+\mathcal{L} &amp; =\left\{i \in\{1, \ldots, m\} \mid y_i&lt;0\right\} \\
+\mathcal{U} &amp; =\left\{i \in\{1, \ldots, m\} \mid y_i&gt;0\right\}
+\end{aligned}
+\]</span></p>
+<p>Once the set of active constraints are known, then the solution can be polished by solving <span class="math display">\[
+\left[\begin{array}{ccc}
+P &amp; A_{\mathcal{L}}^T &amp; A_{\mathcal{U}}^T \\
+A_{\mathcal{L}} &amp; \\
+A_{\mathcal{U}} &amp; &amp;
+\end{array}\right]\left[\begin{array}{c}
+x \\
+y_{\mathcal{L}} \\
+y_{\mathcal{U}}
+\end{array}\right]=\left[\begin{array}{c}
+-q \\
+l_{\mathcal{L}} \\
+u_{\mathcal{U}}
+\end{array}\right]
+\]</span> <span class="math display">\[
+y_i=0, \quad i \notin(\mathcal{L} \cup \mathcal{U})
+\]</span> <span class="math display">\[
+z=A x
+\]</span></p>
+<p>The above system is much smaller than the original system (e.g., reduce the size of the system from <span class="math inline">\(n+2m\)</span> to less than <span class="math inline">\(2n\)</span> when the problem is not degenerate).</p>
+<p>However, the above system is not always solvable, e.g.&nbsp;when <span class="math inline">\(P\)</span> is not positive definite or when the problem is degenerate. In this case, a small perutrbation can be added <span class="math inline">\(\delta I\)</span> can be added, <span class="math display">\[
+\underbrace{\left[\begin{array}{ccc}
+P+\delta I &amp; A_{\mathcal{L}}^T &amp; A_{\mathcal{U}}^T \\
+A_{\mathcal{L}} &amp; -\delta I &amp; \\
+A_{\mathcal{U}} &amp; &amp; -\delta I
+\end{array}\right]}_{K} \left[\begin{array}{c}
+\hat{x}^{\prime} \\
+\hat{y}_{\mathcal{L}} \\
+\hat{y}_{\mathcal{U}}
+\end{array}\right] = \underbrace{\left[\begin{array}{c}
+-q \\
+l_{\mathcal{L}} \\
+u_{\mathcal{U}}
+\end{array}\right]}_{g}
+\]</span> with small positive <span class="math inline">\(\delta\)</span>.</p>
+<p>To solve the problem, we can consider the following iteration: <span class="math display">\[
+\hat{t}^{t+1} = (I - (K+\Delta K)^{-1}K)\hat{t}^k + (K+\Delta K)^{-1}g
+\]</span></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

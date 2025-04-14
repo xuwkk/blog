@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Wangkun Xu">
+<meta name="dcterms.date" content="2025-04-14">
 
-<title>About – Wangkun Xu’s Blog</title>
+<title>Chance-constrained Optimization Using Scenario Approach – Wangkun Xu’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,21 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5bad5585c2ea0cd1fb73afb9ac4c767c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-5bad5585c2ea0cd1fb73afb9ac4c767c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -75,18 +78,47 @@ gtag('js', new Date());
 gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Wangkun Xu’s Blog</span>
     </a>
   </div>
@@ -97,7 +129,7 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./about.html" aria-current="page"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -111,7 +143,7 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -123,46 +155,175 @@ gtag('config', 'G-TSYFSJPRKH', { 'anonymize_ip': true});
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Chance-constrained Optimization Using Scenario Approach</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Optimization</div>
+                <div class="quarto-category">Uncertainty</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Wangkun Xu </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 14, 2025</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">April 14, 2025</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#formulation" id="toc-formulation" class="nav-link active" data-scroll-target="#formulation">Formulation</a></li>
+  <li><a href="#scenario-based-approach" id="toc-scenario-based-approach" class="nav-link" data-scroll-target="#scenario-based-approach">Scenario-based Approach</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
+  <li><a href="#structural-property" id="toc-structural-property" class="nav-link" data-scroll-target="#structural-property">Structural Property</a></li>
+  <li><a href="#a-procedure-to-obtain-sp_n" id="toc-a-procedure-to-obtain-sp_n" class="nav-link" data-scroll-target="#a-procedure-to-obtain-sp_n">A Procedure to obtain <span class="math inline">\((SP)_{N}\)</span></a></li>
+  <li><a href="#the-main-results" id="toc-the-main-results" class="nav-link" data-scroll-target="#the-main-results">The Main Results</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<div class="quarto-about-jolla">
-  <img src="profile.jpg" class="about-image
-  round " style="height: 15em; width: 15em;">
- <header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">About</h1>
-</div>
-<div class="quarto-title-meta">
-  </div>
-</header><main class="content" id="quarto-document-content">
-<p>Welcome to my blog! Here I regularly update learning notes and news about my research.</p>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
-</main> 
-  <hr class="about-sep">
-   <div class="about-links">
-  <a href="https://www.linkedin.com/in/wangkun-xu/" class="about-link" rel="" target="">
-    <i class="bi bi-linkedin"></i>
-     <span class="about-link-text">LinkedIn</span>
-  </a>
-  <a href="https://github.com/xuwkk" class="about-link" rel="" target="">
-    <i class="bi bi-github"></i>
-     <span class="about-link-text">Github</span>
-  </a>
-  <a href="https://scholar.google.com/citations?user=-RuGgBoAAAAJ&amp;hl=en" class="about-link" rel="" target="">
-    <i class="bi bi-google"></i>
-     <span class="about-link-text">Scholar</span>
-  </a>
-  <a href="https://profiles.imperial.ac.uk/wangkun.xu18/" class="about-link" rel="" target="">
-    <i class="bi bi-file-person"></i>
-     <span class="about-link-text">Profile</span>
-  </a>
-</div>
-</div>
- <!-- /main -->
+
+
+
+<p><strong>Reference</strong>: X. Geng and L. Xie, ‘Data-driven decision making in power systems with probabilistic guarantees: Theory and applications of chance-constrained optimization’, <em>Annual Reviews in Control</em>, vol.&nbsp;47, pp.&nbsp;341–363, 2019, doi: <a href="https://doi.org/10.1016/j.arcontrol.2019.05.005">10.1016/j.arcontrol.2019.05.005</a>.</p>
+<section id="formulation" class="level2">
+<h2 class="anchored" data-anchor-id="formulation">Formulation</h2>
+<p>Consider the following chance-constrained optimization problem: <span class="math display">\[
+\begin{aligned}
+&amp; \text { (CCO): } \min _x c^{\top} x \\
+&amp; \qquad \begin{array}{l}
+\text { s.t. } \mathbb{P}_{\xi}(f(x, \xi) \leq 0) \geq 1-\epsilon \\
+\quad x \in \mathcal{X}
+\end{array}
+\end{aligned}
+\]</span> The chance constraint should be understood as joint constraint for a vector <span class="math inline">\(f\)</span>, e.g., <span class="math display">\[
+\mathbb{P}\left(f_1(x, \xi) \leq 0, f_2(x, \xi) \leq 0, \cdots, f_m(x, \xi) \leq 0\right) \geq 1-\epsilon
+\]</span></p>
+<p><strong>Connection to Value at Risk (VaR)</strong> <em>VaR</em>: <span class="math inline">\(VaR(\xi,1-\epsilon):=\inf\{\gamma:\mathcal{P}(\xi\leq \gamma)\geq 1-\epsilon\}\)</span>. I.e., the minimum value of <span class="math inline">\(\gamma\)</span> (quantile) such that the probability of <span class="math inline">\(\xi\)</span> being less than <span class="math inline">\(\gamma\)</span> is at least <span class="math inline">\(1-\epsilon\)</span>.</p>
+<p>Therefore, the chance constraint is <span class="math display">\[
+\mathbb{P}_{\xi}(f_{i}(x, \xi) \leq 0) \geq 1-\epsilon \Leftrightarrow VaR(f_{i}(x,\xi),1-\epsilon)\leq {0}
+\]</span></p>
+<p><em>Violation Probability of <span class="math inline">\(x^\diamond\)</span></em>: <span class="math inline">\(\mathbb{V}\left(x^{\diamond}\right):=\mathbb{P}_{\xi}\left(f\left(x^{\diamond}, \xi\right) \geq 0\right)\)</span></p>
+<p>Assumption.</p>
+<ul>
+<li>Function <span class="math inline">\(f(x, \xi)\)</span> is convex in <span class="math inline">\(x\)</span> for every instance of <span class="math inline">\(\xi\)</span>.</li>
+<li>The deterministic constraints define a convex set <span class="math inline">\(\mathcal{X}\)</span>.</li>
+</ul>
+<p><strong>Special Cases</strong> <span class="math display">\[
+\begin{aligned}
+&amp; \min _{x \in \mathcal{X}} c^{\top} x \\
+&amp; \text { s.t. } \mathbb{P}\left(a^{\top} x+b^{\top} \xi+\xi^{\top} D x \leq e\right) \geq 1-\epsilon
+\end{aligned}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\xi \sim \mathcal{N}(\mu, \Sigma)\)</span> is equivalent to, <span class="math display">\[
+\begin{aligned}
+&amp; \min _{x \in \mathcal{X}} c^{\top} x \\
+&amp; \text { s.t. } e-b^{\top} \mu-\left(a+D^{\top} \mu\right)^{\top} x \geq \Phi^{-1}(1-\epsilon) \sqrt{(b+D x)^{\top} \Sigma(b+D x)}
+\end{aligned}
+\]</span> which is second-order cone program. Note that <span class="math inline">\(\mu,\sigma\)</span> are constant.</li>
+</ul>
+</section>
+<section id="scenario-based-approach" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-based-approach">Scenario-based Approach</h2>
+<section id="definition" class="level3">
+<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<p>A dataset with <span class="math inline">\(N\)</span> scenarios <span class="math inline">\(\left\{\xi^i\right\}_{i=1}^N\)</span>.<br>
+Assumption:</p>
+<ul>
+<li>the dataset is independent and identically distributed (i.i.d.).</li>
+<li>Convexity assumption.</li>
+<li>Does not make any assumption on the uncertainty distribution.</li>
+<li>Uniqueness and feasibility assumption.</li>
+</ul>
+<p>The chance-constrained optimization problem can be formulated as, <span class="math display">\[
+\begin{aligned}
+&amp; (\mathrm{SP})_N: \min _{x \in \mathcal{X}} c^{\top} x \\
+&amp; \quad \text { s.t. } f\left(x, \xi^1\right) \leq 0, \cdots, f\left(x, \xi^N\right) \leq 0
+\end{aligned}
+\]</span></p>
+<ul>
+<li><span class="math inline">\((SP)_{N}\)</span> is a random program because drawing iid samples is random. E.g., we can have infinite choice of N samples.</li>
+<li><em>Sample Complexity</em>. The number of <span class="math inline">\(N\)</span> matters. If <span class="math inline">\(N\)</span> is too large then it is very conservative; if <span class="math inline">\(N\)</span> is too small, then the solution is not feasible to the original chance constraint. We would like to find a smallest <span class="math inline">\(N\)</span> such that the chance constraint is satisfied with high confidence. “What is the smallest <span class="math inline">\(N\)</span> such that <span class="math inline">\(V(x_{N}^\star)\leq\epsilon\)</span> with high probability?”</li>
+</ul>
+</section>
+<section id="structural-property" class="level3">
+<h3 class="anchored" data-anchor-id="structural-property">Structural Property</h3>
+<p><em>Support Scenario</em>. Scenario <span class="math inline">\(\xi^i\)</span> is a support scenario for <span class="math inline">\((S P)_N\)</span> if its removal changes the solution of <span class="math inline">\((\mathrm{SP})_N\)</span>. The set of support scenarios of <span class="math inline">\(\left(\mathrm{SP}_N\right)\)</span> is denoted by <span class="math inline">\(\mathcal{S}\)</span>. Under the convexity assumption, <span class="math inline">\(|\mathcal{S}|\leq n\)</span> (the number of decision variable). If <span class="math inline">\(|\mathcal{S}|=n\)</span>, <span class="math inline">\((SP)_{N}\)</span> is called <em>fully-supported</em>. For non-convex problem, the number of support scenarios can be larger than <span class="math inline">\(n\)</span>.</p>
+<p><em>Non-degenerate Problem</em>. Problem <span class="math inline">\(\mathrm{SP}_N\)</span> is said to be non-degenerate, if <span class="math inline">\(o^*(\mathcal{N})=o^*(\mathcal{S})\)</span>. I.e., <span class="math inline">\((SP)_{N}\)</span> has the same optimum as the one with support scenario <span class="math inline">\((SP)_{S}\)</span>.</p>
+</section>
+<section id="a-procedure-to-obtain-sp_n" class="level3">
+<h3 class="anchored" data-anchor-id="a-procedure-to-obtain-sp_n">A Procedure to obtain <span class="math inline">\((SP)_{N}\)</span></h3>
+<ol type="1">
+<li>Find upper bound <span class="math inline">\(\bar{h}\geq|S|\)</span>.</li>
+<li>Find suitable complexity <span class="math inline">\(N(\bar{h},\epsilon,\beta)\)</span> where <span class="math inline">\(\epsilon\)</span> is the desired violation probability and <span class="math inline">\(\beta\)</span> is the confidence.</li>
+<li>Solve the resultant <span class="math inline">\((SP)_{N}\)</span>.</li>
+</ol>
+<p>Under the convexity, iid, and non-degenerate assumption, we have <span class="math display">\[
+\mathbb{P}^N\left(\mathbb{V}\left(x_N^*\right)&gt;\epsilon\right) \leq \sum_{i=1}^{n-1}\binom{N}{i} \epsilon^i(1-\epsilon)^{N-i}
+\]</span></p>
+<ul>
+<li>This is the probability of the (violation) probability. The probability of the violation probability on the optimal solution of <span class="math inline">\((SP)_{N}\)</span> larger than <span class="math inline">\(\epsilon\)</span> is smaller than the RHS.</li>
+<li><span class="math inline">\(n\)</span>: dimension of decision variables.</li>
+<li>The inequality is tight if <span class="math inline">\(|S|=n\)</span> (fully support case).</li>
+<li>The RHS is the tail of <em>binomial distribution</em>.</li>
+</ul>
+</section>
+<section id="the-main-results" class="level3">
+<h3 class="anchored" data-anchor-id="the-main-results">The Main Results</h3>
+<p>Let <span class="math inline">\(\epsilon\in(0,1)\)</span> be the maximum violation probability and <span class="math inline">\(\beta \in(0,1)\)</span> be the confidence level, if we set <span class="math display">\[
+F(n, N, \epsilon) = \sum_{i=0}^{n-1}\binom{N}{i} \epsilon^i(1-\epsilon)^{N-i} \leq \beta
+\]</span></p>
+<p>Note that <span class="math inline">\(F(n, N, \epsilon)\)</span> is the cumulative distribution function of the binomial distribution.</p>
+<p>Then find a minimum <span class="math inline">\(N\)</span> such that we can have <span class="math display">\[
+\mathbb{P}^N\left(\mathbb{V}\left(x_N^*\right)&gt;\epsilon\right) \leq \sum_{i=1}^{n-1}\binom{N}{i} \epsilon^i(1-\epsilon)^{N-i} \leq \beta
+\]</span> which means the probability of not following the violation rate is bounded by <span class="math inline">\(1-\beta\)</span>, i.e, the <em>risk of failure</em>, or <span class="math display">\[
+\mathbb{P}^N\left(\mathbb{V}\left(x_N^*\right) \leq \epsilon\right) \geq 1-\beta
+\]</span> which means the probability of satisfying the violation rate is bounded by <span class="math inline">\(\beta\)</span>.</p>
+<p>Moreover, if we can find an upper bound to the number of support scenarios <span class="math inline">\(n&gt;h\geq|S|\)</span>, then <span class="math inline">\(n\)</span> can be replaced by <span class="math inline">\(h\)</span>, <span class="math display">\[
+\mathbb{P}^N\left(\mathbb{V}\left(x_N^*\right)&gt;\epsilon\right) \leq \sum_{i=1}^{h-1}\binom{N}{i} \epsilon^i(1-\epsilon)^{N-i} \leq \beta
+\]</span></p>
+<p>For non-convexity case, it is likely that <span class="math inline">\(h&gt;n\)</span>. But if a h as the upper bound to <span class="math inline">\(|S|\)</span> can be found, the above results are still valid. Consequently, we can draw <span class="math inline">\(N\)</span> iid samples from the dataset and formulate the <span class="math inline">\((SP)_{N}\)</span> to obtain a feasible solution.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -183,6 +344,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
       if (clz.startsWith('code-annotation-')) {                     

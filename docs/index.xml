@@ -5,12 +5,196 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>Wangkun&#39;s Blog</title>
+<title>Wangkun Xu&#39;s Blog</title>
 <link>https://xuwkk.github.io/blog/</link>
 <atom:link href="https://xuwkk.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>This is a blog for sharing my thoughts and notes. I will post my learning experience on machine learning, optimization, and power systems.</description>
-<generator>quarto-1.5.40</generator>
-<lastBuildDate>Tue, 03 Sep 2024 23:00:00 GMT</lastBuildDate>
+<generator>quarto-1.6.39</generator>
+<lastBuildDate>Sun, 13 Apr 2025 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>Chance-constrained Optimization Using Scenario Approach</title>
+  <dc:creator>Wangkun Xu</dc:creator>
+  <link>https://xuwkk.github.io/blog/posts/learning/optimization/cco.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p><strong>Reference</strong>: X. Geng and L. Xie, ‘Data-driven decision making in power systems with probabilistic guarantees: Theory and applications of chance-constrained optimization’, <em>Annual Reviews in Control</em>, vol.&nbsp;47, pp.&nbsp;341–363, 2019, doi: <a href="https://doi.org/10.1016/j.arcontrol.2019.05.005">10.1016/j.arcontrol.2019.05.005</a>.</p>
+<section id="formulation" class="level2">
+<h2 class="anchored" data-anchor-id="formulation">Formulation</h2>
+<p>Consider the following chance-constrained optimization problem: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A&amp;%20%5Ctext%20%7B%20(CCO):%20%7D%20%5Cmin%20_x%20c%5E%7B%5Ctop%7D%20x%20%5C%5C%0A&amp;%20%5Cqquad%20%5Cbegin%7Barray%7D%7Bl%7D%0A%5Ctext%20%7B%20s.t.%20%7D%20%5Cmathbb%7BP%7D_%7B%5Cxi%7D(f(x,%20%5Cxi)%20%5Cleq%200)%20%5Cgeq%201-%5Cepsilon%20%5C%5C%0A%5Cquad%20x%20%5Cin%20%5Cmathcal%7BX%7D%0A%5Cend%7Barray%7D%0A%5Cend%7Baligned%7D%0A"> The chance constraint should be understood as joint constraint for a vector <img src="https://latex.codecogs.com/png.latex?f">, e.g., <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%7BP%7D%5Cleft(f_1(x,%20%5Cxi)%20%5Cleq%200,%20f_2(x,%20%5Cxi)%20%5Cleq%200,%20%5Ccdots,%20f_m(x,%20%5Cxi)%20%5Cleq%200%5Cright)%20%5Cgeq%201-%5Cepsilon%0A"></p>
+<p><strong>Connection to Value at Risk (VaR)</strong> <em>VaR</em>: <img src="https://latex.codecogs.com/png.latex?VaR(%5Cxi,1-%5Cepsilon):=%5Cinf%5C%7B%5Cgamma:%5Cmathcal%7BP%7D(%5Cxi%5Cleq%20%5Cgamma)%5Cgeq%201-%5Cepsilon%5C%7D">. I.e., the minimum value of <img src="https://latex.codecogs.com/png.latex?%5Cgamma"> (quantile) such that the probability of <img src="https://latex.codecogs.com/png.latex?%5Cxi"> being less than <img src="https://latex.codecogs.com/png.latex?%5Cgamma"> is at least <img src="https://latex.codecogs.com/png.latex?1-%5Cepsilon">.</p>
+<p>Therefore, the chance constraint is <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%7BP%7D_%7B%5Cxi%7D(f_%7Bi%7D(x,%20%5Cxi)%20%5Cleq%200)%20%5Cgeq%201-%5Cepsilon%20%5CLeftrightarrow%20VaR(f_%7Bi%7D(x,%5Cxi),1-%5Cepsilon)%5Cleq%20%7B0%7D%0A"></p>
+<p><em>Violation Probability of <img src="https://latex.codecogs.com/png.latex?x%5E%5Cdiamond"></em>: <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BV%7D%5Cleft(x%5E%7B%5Cdiamond%7D%5Cright):=%5Cmathbb%7BP%7D_%7B%5Cxi%7D%5Cleft(f%5Cleft(x%5E%7B%5Cdiamond%7D,%20%5Cxi%5Cright)%20%5Cgeq%200%5Cright)"></p>
+<p>Assumption.</p>
+<ul>
+<li>Function <img src="https://latex.codecogs.com/png.latex?f(x,%20%5Cxi)"> is convex in <img src="https://latex.codecogs.com/png.latex?x"> for every instance of <img src="https://latex.codecogs.com/png.latex?%5Cxi">.</li>
+<li>The deterministic constraints define a convex set <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BX%7D">.</li>
+</ul>
+<p><strong>Special Cases</strong> <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A&amp;%20%5Cmin%20_%7Bx%20%5Cin%20%5Cmathcal%7BX%7D%7D%20c%5E%7B%5Ctop%7D%20x%20%5C%5C%0A&amp;%20%5Ctext%20%7B%20s.t.%20%7D%20%5Cmathbb%7BP%7D%5Cleft(a%5E%7B%5Ctop%7D%20x+b%5E%7B%5Ctop%7D%20%5Cxi+%5Cxi%5E%7B%5Ctop%7D%20D%20x%20%5Cleq%20e%5Cright)%20%5Cgeq%201-%5Cepsilon%0A%5Cend%7Baligned%7D%0A"></p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cxi%20%5Csim%20%5Cmathcal%7BN%7D(%5Cmu,%20%5CSigma)"> is equivalent to, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A&amp;%20%5Cmin%20_%7Bx%20%5Cin%20%5Cmathcal%7BX%7D%7D%20c%5E%7B%5Ctop%7D%20x%20%5C%5C%0A&amp;%20%5Ctext%20%7B%20s.t.%20%7D%20e-b%5E%7B%5Ctop%7D%20%5Cmu-%5Cleft(a+D%5E%7B%5Ctop%7D%20%5Cmu%5Cright)%5E%7B%5Ctop%7D%20x%20%5Cgeq%20%5CPhi%5E%7B-1%7D(1-%5Cepsilon)%20%5Csqrt%7B(b+D%20x)%5E%7B%5Ctop%7D%20%5CSigma(b+D%20x)%7D%0A%5Cend%7Baligned%7D%0A"> which is second-order cone program. Note that <img src="https://latex.codecogs.com/png.latex?%5Cmu,%5Csigma"> are constant.</li>
+</ul>
+</section>
+<section id="scenario-based-approach" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-based-approach">Scenario-based Approach</h2>
+<section id="definition" class="level3">
+<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<p>A dataset with <img src="https://latex.codecogs.com/png.latex?N"> scenarios <img src="https://latex.codecogs.com/png.latex?%5Cleft%5C%7B%5Cxi%5Ei%5Cright%5C%7D_%7Bi=1%7D%5EN">.<br>
+Assumption:</p>
+<ul>
+<li>the dataset is independent and identically distributed (i.i.d.).</li>
+<li>Convexity assumption.</li>
+<li>Does not make any assumption on the uncertainty distribution.</li>
+<li>Uniqueness and feasibility assumption.</li>
+</ul>
+<p>The chance-constrained optimization problem can be formulated as, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A&amp;%20(%5Cmathrm%7BSP%7D)_N:%20%5Cmin%20_%7Bx%20%5Cin%20%5Cmathcal%7BX%7D%7D%20c%5E%7B%5Ctop%7D%20x%20%5C%5C%0A&amp;%20%5Cquad%20%5Ctext%20%7B%20s.t.%20%7D%20f%5Cleft(x,%20%5Cxi%5E1%5Cright)%20%5Cleq%200,%20%5Ccdots,%20f%5Cleft(x,%20%5Cxi%5EN%5Cright)%20%5Cleq%200%0A%5Cend%7Baligned%7D%0A"></p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D"> is a random program because drawing iid samples is random. E.g., we can have infinite choice of N samples.</li>
+<li><em>Sample Complexity</em>. The number of <img src="https://latex.codecogs.com/png.latex?N"> matters. If <img src="https://latex.codecogs.com/png.latex?N"> is too large then it is very conservative; if <img src="https://latex.codecogs.com/png.latex?N"> is too small, then the solution is not feasible to the original chance constraint. We would like to find a smallest <img src="https://latex.codecogs.com/png.latex?N"> such that the chance constraint is satisfied with high confidence. “What is the smallest <img src="https://latex.codecogs.com/png.latex?N"> such that <img src="https://latex.codecogs.com/png.latex?V(x_%7BN%7D%5E%5Cstar)%5Cleq%5Cepsilon"> with high probability?”</li>
+</ul>
+</section>
+<section id="structural-property" class="level3">
+<h3 class="anchored" data-anchor-id="structural-property">Structural Property</h3>
+<p><em>Support Scenario</em>. Scenario <img src="https://latex.codecogs.com/png.latex?%5Cxi%5Ei"> is a support scenario for <img src="https://latex.codecogs.com/png.latex?(S%20P)_N"> if its removal changes the solution of <img src="https://latex.codecogs.com/png.latex?(%5Cmathrm%7BSP%7D)_N">. The set of support scenarios of <img src="https://latex.codecogs.com/png.latex?%5Cleft(%5Cmathrm%7BSP%7D_N%5Cright)"> is denoted by <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BS%7D">. Under the convexity assumption, <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathcal%7BS%7D%7C%5Cleq%20n"> (the number of decision variable). If <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathcal%7BS%7D%7C=n">, <img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D"> is called <em>fully-supported</em>. For non-convex problem, the number of support scenarios can be larger than <img src="https://latex.codecogs.com/png.latex?n">.</p>
+<p><em>Non-degenerate Problem</em>. Problem <img src="https://latex.codecogs.com/png.latex?%5Cmathrm%7BSP%7D_N"> is said to be non-degenerate, if <img src="https://latex.codecogs.com/png.latex?o%5E*(%5Cmathcal%7BN%7D)=o%5E*(%5Cmathcal%7BS%7D)">. I.e., <img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D"> has the same optimum as the one with support scenario <img src="https://latex.codecogs.com/png.latex?(SP)_%7BS%7D">.</p>
+</section>
+<section id="a-procedure-to-obtain-sp_n" class="level3">
+<h3 class="anchored" data-anchor-id="a-procedure-to-obtain-sp_n">A Procedure to obtain <img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D"></h3>
+<ol type="1">
+<li>Find upper bound <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bh%7D%5Cgeq%7CS%7C">.</li>
+<li>Find suitable complexity <img src="https://latex.codecogs.com/png.latex?N(%5Cbar%7Bh%7D,%5Cepsilon,%5Cbeta)"> where <img src="https://latex.codecogs.com/png.latex?%5Cepsilon"> is the desired violation probability and <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> is the confidence.</li>
+<li>Solve the resultant <img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D">.</li>
+</ol>
+<p>Under the convexity, iid, and non-degenerate assumption, we have <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%7BP%7D%5EN%5Cleft(%5Cmathbb%7BV%7D%5Cleft(x_N%5E*%5Cright)%3E%5Cepsilon%5Cright)%20%5Cleq%20%5Csum_%7Bi=1%7D%5E%7Bn-1%7D%5Cbinom%7BN%7D%7Bi%7D%20%5Cepsilon%5Ei(1-%5Cepsilon)%5E%7BN-i%7D%0A"></p>
+<ul>
+<li>This is the probability of the (violation) probability. The probability of the violation probability on the optimal solution of <img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D"> larger than <img src="https://latex.codecogs.com/png.latex?%5Cepsilon"> is smaller than the RHS.</li>
+<li><img src="https://latex.codecogs.com/png.latex?n">: dimension of decision variables.</li>
+<li>The inequality is tight if <img src="https://latex.codecogs.com/png.latex?%7CS%7C=n"> (fully support case).</li>
+<li>The RHS is the tail of <em>binomial distribution</em>.</li>
+</ul>
+</section>
+<section id="the-main-results" class="level3">
+<h3 class="anchored" data-anchor-id="the-main-results">The Main Results</h3>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cepsilon%5Cin(0,1)"> be the maximum violation probability and <img src="https://latex.codecogs.com/png.latex?%5Cbeta%20%5Cin(0,1)"> be the confidence level, if we set <img src="https://latex.codecogs.com/png.latex?%0AF(n,%20N,%20%5Cepsilon)%20=%20%5Csum_%7Bi=0%7D%5E%7Bn-1%7D%5Cbinom%7BN%7D%7Bi%7D%20%5Cepsilon%5Ei(1-%5Cepsilon)%5E%7BN-i%7D%20%5Cleq%20%5Cbeta%0A"></p>
+<p>Note that <img src="https://latex.codecogs.com/png.latex?F(n,%20N,%20%5Cepsilon)"> is the cumulative distribution function of the binomial distribution.</p>
+<p>Then find a minimum <img src="https://latex.codecogs.com/png.latex?N"> such that we can have <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%7BP%7D%5EN%5Cleft(%5Cmathbb%7BV%7D%5Cleft(x_N%5E*%5Cright)%3E%5Cepsilon%5Cright)%20%5Cleq%20%5Csum_%7Bi=1%7D%5E%7Bn-1%7D%5Cbinom%7BN%7D%7Bi%7D%20%5Cepsilon%5Ei(1-%5Cepsilon)%5E%7BN-i%7D%20%5Cleq%20%5Cbeta%0A"> which means the probability of not following the violation rate is bounded by <img src="https://latex.codecogs.com/png.latex?1-%5Cbeta">, i.e, the <em>risk of failure</em>, or <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%7BP%7D%5EN%5Cleft(%5Cmathbb%7BV%7D%5Cleft(x_N%5E*%5Cright)%20%5Cleq%20%5Cepsilon%5Cright)%20%5Cgeq%201-%5Cbeta%0A"> which means the probability of satisfying the violation rate is bounded by <img src="https://latex.codecogs.com/png.latex?%5Cbeta">.</p>
+<p>Moreover, if we can find an upper bound to the number of support scenarios <img src="https://latex.codecogs.com/png.latex?n%3Eh%5Cgeq%7CS%7C">, then <img src="https://latex.codecogs.com/png.latex?n"> can be replaced by <img src="https://latex.codecogs.com/png.latex?h">, <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%7BP%7D%5EN%5Cleft(%5Cmathbb%7BV%7D%5Cleft(x_N%5E*%5Cright)%3E%5Cepsilon%5Cright)%20%5Cleq%20%5Csum_%7Bi=1%7D%5E%7Bh-1%7D%5Cbinom%7BN%7D%7Bi%7D%20%5Cepsilon%5Ei(1-%5Cepsilon)%5E%7BN-i%7D%20%5Cleq%20%5Cbeta%0A"></p>
+<p>For non-convexity case, it is likely that <img src="https://latex.codecogs.com/png.latex?h%3En">. But if a h as the upper bound to <img src="https://latex.codecogs.com/png.latex?%7CS%7C"> can be found, the above results are still valid. Consequently, we can draw <img src="https://latex.codecogs.com/png.latex?N"> iid samples from the dataset and formulate the <img src="https://latex.codecogs.com/png.latex?(SP)_%7BN%7D"> to obtain a feasible solution.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Optimization</category>
+  <category>Uncertainty</category>
+  <guid>https://xuwkk.github.io/blog/posts/learning/optimization/cco.html</guid>
+  <pubDate>Sun, 13 Apr 2025 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Matrix Computations</title>
+  <dc:creator>Wangkun Xu</dc:creator>
+  <link>https://xuwkk.github.io/blog/posts/learning/lineat_algebra/matrix_computation.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This post summarizes the knowledge from the book <em>Matrix Computation</em> authored by <em>Gene</em> and <em>Charles</em> amd from some other refernces.</p>
+<section id="singular-value-decomposition-svd" class="level2">
+<h2 class="anchored" data-anchor-id="singular-value-decomposition-svd">Singular Value Decomposition (SVD)</h2>
+<div id="thm-svd" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 (SVD)</strong></span> If <img src="https://latex.codecogs.com/png.latex?A"> is a real <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix, then there exist orthogonal matrices <img src="https://latex.codecogs.com/png.latex?%0AU%20=%20%5Cbegin%7Bbmatrix%7D%20u_1%20&amp;%20%5Ccdots%20&amp;%20u_m%20%5Cend%7Bbmatrix%7D,%20%5Cquad%20V%20=%20%5Cbegin%7Bbmatrix%7D%20v_1%20&amp;%20%5Ccdots%20&amp;%20v_n%20%5Cend%7Bbmatrix%7D%0A"> such that <img src="https://latex.codecogs.com/png.latex?%0AU%5ET%20A%20V%20=%20%5CSigma%20=%20%20%5Coperatorname%7Bdiag%7D(%5Csigma_1,%20%5Cldots,%20%5Csigma_p)%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bm%20%5Ctimes%20n%7D,%5Cquad%20p%20=%20%5Cmin(m,%20n),%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Csigma_1%20%5Cgeq%20%5Csigma_2%20%5Cgeq%20%5Ccdots%20%5Cgeq%20%5Csigma_p%20%5Cgeq%200"> are the singular values of <img src="https://latex.codecogs.com/png.latex?A">. The columns of <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> are the left and right singular vectors of <img src="https://latex.codecogs.com/png.latex?A">, respectively.</p>
+</div>
+<div id="cor-1" class="theorem corollary">
+<p><span class="theorem-title"><strong>Corollary 1</strong></span> If <img src="https://latex.codecogs.com/png.latex?U%5ET%20A%20V%20=%20%5CSigma"> is the SVD of <img src="https://latex.codecogs.com/png.latex?A%5Cin%5Cmathbb%7BR%7D%5E%7Bm%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?m%20%5Cgeq%20%20n">, then for <img src="https://latex.codecogs.com/png.latex?i=1:n">, <img src="https://latex.codecogs.com/png.latex?Av_i%20=%20%5Csigma_i%20u_i"> and <img src="https://latex.codecogs.com/png.latex?A%5ETu_i%20=%20%5Csigma_i%20v_i">.</p>
+</div>
+<div id="cor-" class="theorem corollary">
+<p><span class="theorem-title"><strong>Corollary 2</strong></span> If <img src="https://latex.codecogs.com/png.latex?A%5Cin%5Cmathbb%7BR%7D%5E%7Bm%5Ctimes%20n%7D">, then <img src="https://latex.codecogs.com/png.latex?%0A%5C%7CA%5C%7C_2%20=%20%5Csigma_1,%20%5Cquad%20%5C%7CA%5C%7C_F%20=%20%5Csqrt%7B%5Csigma_1%5E2%20+%20%5Ccdots%20+%20%5Csigma_p%5E2%7D.%0A"></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>Proof</em>. </span>The proof directly follows from the fact that the unitary transformation preserve both the 2-norm and Frobenius norm.</p>
+</div>
+<div id="cor-" class="theorem corollary">
+<p><span class="theorem-title"><strong>Corollary 3 (Subspaces)</strong></span> If $A has <img src="https://latex.codecogs.com/png.latex?r"> positive singular values, then <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brank%7D(A)%20=%20r"> and <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Coperatorname%7Brange%7D(A)%20&amp;=%20%5Coperatorname%7Bspan%7D%5C%7Bu_1,%20%5Cldots,%20u_r%5C%7D,%20%5C%5C%0A%5Coperatorname%7Bnull%7D(A)%20&amp;=%20%5Coperatorname%7Bspan%7D%5C%7Bv_%7Br+1%7D,%20%5Cldots,%20v_n%5C%7D%20%5C%5C%0A%5Coperatorname%7Brange%7D(A%5ET)%20&amp;=%20%5Coperatorname%7Bspan%7D%5C%7Bv_1,%20%5Cldots,%20v_r%5C%7D,%20%5C%5C%0A%5Coperatorname%7Bnull%7D(A%5ET)%20&amp;=%20%5Coperatorname%7Bspan%7D%5C%7Bu_%7Br+1%7D,%20%5Cldots,%20u_m%5C%7D%0A%5Cend%7Baligned%7D%0A"></p>
+</div>
+<div id="cor-" class="theorem corollary">
+<p><span class="theorem-title"><strong>Corollary 4 (Symmetric Matrices)</strong></span> If <img src="https://latex.codecogs.com/png.latex?A"> is a symmetric matrix, then <img src="https://latex.codecogs.com/png.latex?A%20=%20U%20%5CSigma%20U%5ET">. Trivially, <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brange%7D(A)%20=%20%5Coperatorname%7Brange%7D(A%5ET)"> and <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(A)%20=%20%5Coperatorname%7Bnull%7D(A%5ET)">.</p>
+</div>
+<p>The SVD on sysmmetric matrices can be found by <code>torch.linalg.eigh</code> in PyTorch.</p>
+<div id="cor-" class="theorem corollary">
+<p><span class="theorem-title"><strong>Corollary 5 (Connection to Eigenvalues)</strong></span> <img src="https://latex.codecogs.com/png.latex?%0AA%5ETA%20=%20V%20%5CSigma%5ET%20U%5ET%20U%20%5CSigma%20V%5ET%20=%20V%20%5Coperatorname%7Bdiag%7D(%5Csigma_1%5E2,%5Ccdots,%5Csigma_n%5E2)%20V%5ET,%20%5Cquad%20AA%5ET%20=%20U%20%5CSigma%20V%5ET%20V%20%5CSigma%20U%5ET%20=%20U%20%5Coperatorname%7Bdiag%7D(%5Csigma_1%5E2,%5Ccdots,%5Csigma_m%5E2)%20U%5ET%0A"></p>
+<section id="projections" class="level2">
+<h2 class="anchored" data-anchor-id="projections">Projections</h2>
+<p><img src="https://latex.codecogs.com/png.latex?P%5Cin%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%20n%7D"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?S"> if <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brange%7D(P)%20=%20S"> and <img src="https://latex.codecogs.com/png.latex?P%5E2%20=%20P"> and <img src="https://latex.codecogs.com/png.latex?P%5ET%20=%20P">. It can be proved that the orthogonal projection for a subspace is unique and if the columns of <img src="https://latex.codecogs.com/png.latex?V"> are orthonormal basis of <img src="https://latex.codecogs.com/png.latex?S">, then the unique orthogonal projection operator is <img src="https://latex.codecogs.com/png.latex?V%20V%5ET">.</p>
+<p>Suppose <img src="https://latex.codecogs.com/png.latex?A%5Cin%5Cmathbb%7BR%7D%5E%7Bm%5Ctimes%20n%7D"> has SVD <img src="https://latex.codecogs.com/png.latex?A%20=%20U%5CSigma%20V%5ET"> and <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brank%7D(A)%20=%20r">, then the <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> can be partitioned as <img src="https://latex.codecogs.com/png.latex?%0AU%20=%20%5Cbegin%7Bbmatrix%7D%20U_1%20&amp;%20U_2%20%5Cend%7Bbmatrix%7D,%20%5Cquad%20V%20=%20%5Cbegin%7Bbmatrix%7D%20V_1%20&amp;%20V_2%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>Then</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?V_1%20V_1%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brange%7D(A%5ET)">.</li>
+<li><img src="https://latex.codecogs.com/png.latex?V_2%20V_2%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(A)">.</li>
+<li><img src="https://latex.codecogs.com/png.latex?U_1%20U_1%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brange%7D(A)">.</li>
+<li><img src="https://latex.codecogs.com/png.latex?U_2%20U_2%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(A%5ET)">.</li>
+</ul>
+</section>
+<section id="least-squares" class="level2">
+<h2 class="anchored" data-anchor-id="least-squares">Least Squares</h2>
+<section id="full-rank-case" class="level3">
+<h3 class="anchored" data-anchor-id="full-rank-case">Full Rank Case</h3>
+<ul>
+<li>Full Column Rank</li>
+</ul>
+<p>If <img src="https://latex.codecogs.com/png.latex?A%5Cin%5Cmathbb%7BR%7D%5E%7Bm%5Ctimes%20n%7D"> has full column rank, then the least squares solution of <img src="https://latex.codecogs.com/png.latex?Ax%20=%20b"> is to find <img src="https://latex.codecogs.com/png.latex?x"> such that <img src="https://latex.codecogs.com/png.latex?%5C%7CAx%20-%20b%5C%7C_2"> is minimized. This is because <img src="https://latex.codecogs.com/png.latex?b"> may not be in the range of <img src="https://latex.codecogs.com/png.latex?A"> and the solution is to find the projection of <img src="https://latex.codecogs.com/png.latex?b"> onto the range of <img src="https://latex.codecogs.com/png.latex?A">. This is an unconstrained optimization problem <img src="https://latex.codecogs.com/png.latex?%0A%5Cmin_x%20%5Cfrac%7B1%7D%7B2%7D%20%5C%7CAx%20-%20b%5C%7C_2%5E2%0A"></p>
+<p>The first-order optimality condition is <img src="https://latex.codecogs.com/png.latex?%0AA%5ET(Ax%20-%20b)%20=%200%0A"></p>
+<p>Because <img src="https://latex.codecogs.com/png.latex?A"> has full column rank, <img src="https://latex.codecogs.com/png.latex?A%5ETA"> is invertible and the solution is <img src="https://latex.codecogs.com/png.latex?%0Ax_%7BLS%7D%20=%20(A%5ETA)%5E%7B-1%7DA%5ETb%0A"></p>
+<p>Alternatively, the LS solution can be directly derived from the definition of SVD. <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5C%7CAx%20-%20b%5C%7C_2%20&amp;%20=%20%5C%7CU%5ET(Ax%20-%20b)%5C%7C_2%20=%20%5C%7C%5CSigma%20V%5ETx%20-%20U%5ETb%5C%7C_2%20%5C%5C%0A&amp;%20=%20%5Csum_%7Bi=1%7D%5En%20(%5Csigma_i%20v_i%5ETx%20-%20u_i%5ETb)%5E2%20+%20%5Csum_%7Bi=n+1%7D%5Em%20(u_i%5ETb)%5E2%0A%5Cend%7Baligned%7D%0A"></p>
+<p>The minimizer is <img src="https://latex.codecogs.com/png.latex?%0Ax_%7BLS%7D%20=%20%5Csum_%7Bi=1%7D%5En%20%5Cfrac%7Bu_i%5ETb%7D%7B%5Csigma_i%7Dv_i%0A"></p>
+<p>Note that in this case <img src="https://latex.codecogs.com/png.latex?A%20=%20U_1%5CSigma_1%20V%5ET"> and <img src="https://latex.codecogs.com/png.latex?x_%7BLS%7D%20=%20V%5CSigma_1%5E%7B-1%7DU_1%5ETb">.</p>
+<ul>
+<li>Full Row Rank</li>
+</ul>
+<p>In this case we have <img src="https://latex.codecogs.com/png.latex?y%5Cin%5Coperatorname%7Brange%7D(A)">. The minimum norm solution is to find <img src="https://latex.codecogs.com/png.latex?%0A%5Cmin_x%20%5C%7Cx%5C%7C_2%20%5Cquad%20%5Ctext%7Bs.t.%7D%20%5Cquad%20Ax%20=%20b%0A"></p>
+<p>From the first-order optimality condition, we can derive <img src="https://latex.codecogs.com/png.latex?%5Clambda%20=%20-(AA%5ET)%5E%7B-1%7Dy"> and <img src="https://latex.codecogs.com/png.latex?x%5E%5Cstar%20=%20A%5ET(AA%5ET)%5E%7B-1%7Dy">.</p>
+<p>We can indeed check that this <img src="https://latex.codecogs.com/png.latex?x%5E%5Cstar"> has the minimum norm for all solutions <img src="https://latex.codecogs.com/png.latex?x"> satisfying <img src="https://latex.codecogs.com/png.latex?Ax%20=%20b">. To start, we have <img src="https://latex.codecogs.com/png.latex?A(x%20-%20x%5E%5Cstar)%20=%200">. Then, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A(x-x%5E%5Cstar)%5ETx%5E%5Cstar%20&amp;=%20(x-x%5E%5Cstar)%5ETA%5ET(AA%5ET)%5E%7B-1%7Dy%20%5C%5C%0A&amp;%20=%20(A(x-x%5E%5Cstar))%5ET(AA%5ET)%5E%7B-1%7Dy%20=%200%0A%5Cend%7Baligned%7D%0A"></p>
+<p>Therefore, <img src="https://latex.codecogs.com/png.latex?(x-x%5E%5Cstar)%20%5Cperp%20x%5E%5Cstar">. So, <img src="https://latex.codecogs.com/png.latex?%0A%5C%7Cx%5C%7C%5E2%20=%20%5C%7Cx%5E%5Cstar%5C%7C%5E2%20+%20%5C%7Cx%20-%20x%5E%5Cstar%5C%7C%5E2%20%5Cgeq%20%5C%7Cx%5E%5Cstar%5C%7C%5E2%0A"> which means that <img src="https://latex.codecogs.com/png.latex?x%5E%5Cstar"> has the minimum norm of any solution.</p>
+</section>
+<section id="rank-deficient-case" class="level3">
+<h3 class="anchored" data-anchor-id="rank-deficient-case">Rank Deficient Case</h3>
+<p>When <img src="https://latex.codecogs.com/png.latex?A"> has rank <img src="https://latex.codecogs.com/png.latex?r%20%3C%20n">, the least squares solution is not unique. If <img src="https://latex.codecogs.com/png.latex?x"> is a minimizer and <img src="https://latex.codecogs.com/png.latex?z"> is in the null space of <img src="https://latex.codecogs.com/png.latex?A">, then <img src="https://latex.codecogs.com/png.latex?x%20+%20z"> is also a minimizer. In this case, <img src="https://latex.codecogs.com/png.latex?%0Ax_%7BLS%7D%20=%20%5Csum_%7Bi=1%7D%5Er%20%5Cfrac%7Bu_i%5ETb%7D%7B%5Csigma_i%7Dv_i%20=%20V_1%5ET%20%5CSigma_1%5E%7B-1%7D%20U_1%5ET%20b%0A"> minimizes <img src="https://latex.codecogs.com/png.latex?%5C%7CAx%20-%20b%5C%7C_2"> and has the smallest 2-norm among all minimizers. The proof directly follows from the full rank case. E.g., <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5C%7CAx%20-%20b%5C%7C_2%20&amp;%20=%20%5C%7CU%5ET(Ax%20-%20b)%5C%7C_2%20=%20%5C%7C%5CSigma%20V%5ETx%20-%20U%5ETb%5C%7C_2%20%5C%5C%0A&amp;%20=%20%5Csum_%7Bi=1%7D%5Er%20(%5Csigma_i%20v_i%5ETx%20-%20u_i%5ETb)%5E2%20+%20%5Csum_%7Bi=r+1%7D%5Em%20(u_i%5ETb)%5E2%0A%5Cend%7Baligned%7D%0A"></p>
+<p>Note that least square minimum norm solution means that the solution should be first a least square solution!</p>
+</section>
+<section id="pseudo-inverse" class="level3">
+<h3 class="anchored" data-anchor-id="pseudo-inverse">Pseudo-Inverse</h3>
+<p>In general, let <img src="https://latex.codecogs.com/png.latex?A%5Cin%5Cmathbb%7BR%7D%5E%7Bm%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?A%20=%20U%5CSigma%20V%5ET"> be the SVD of <img src="https://latex.codecogs.com/png.latex?A">. The pseudo-inverse of <img src="https://latex.codecogs.com/png.latex?A"> is defined as <img src="https://latex.codecogs.com/png.latex?A%5E+%20=%20V%5CSigma%5E+U%5ET"> with <img src="https://latex.codecogs.com/png.latex?%0A%5CSigma%20=%20%5Coperatorname%7Bdiag%7D(%5Csigma_1,%20%5Cldots,%20%5Csigma_r,%200,%20%5Cldots,%200),%20%5Cquad%20%5CSigma%5E+%20=%20%5Coperatorname%7Bdiag%7D(%5Csigma_1%5E%7B-1%7D,%20%5Cldots,%20%5Csigma_r%5E%7B-1%7D,%200,%20%5Cldots,%200)%0A"> and <img src="https://latex.codecogs.com/png.latex?x_%7BLS%7D%20=%20A%5E+b"> is the minimum norm least squares solution to <img src="https://latex.codecogs.com/png.latex?Ax%20=%20b">.</p>
+<ul>
+<li>If <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brank%7D(A)%20=%20n"> (this infers that <img src="https://latex.codecogs.com/png.latex?m%5Cgeq%20n">), then <img src="https://latex.codecogs.com/png.latex?A%5E+%20=%20(A%5ETA)%5E%7B-1%7DA%5ET"> is the left inverse of <img src="https://latex.codecogs.com/png.latex?A">.</li>
+<li>If <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brank%7D(A)%20=%20m"> (this infers that <img src="https://latex.codecogs.com/png.latex?m%5Cleq%20n">), then <img src="https://latex.codecogs.com/png.latex?A%5E+%20=%20A%5ET(AA%5ET)%5E%7B-1%7D"> is the right inverse of <img src="https://latex.codecogs.com/png.latex?A">.</li>
+<li>If <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brank%7D(A)%20=%20m%20=%20n"> (square matrix), then <img src="https://latex.codecogs.com/png.latex?A%5E+%20=%20A%5E%7B-1%7D"> is the inverse of <img src="https://latex.codecogs.com/png.latex?A">.</li>
+</ul>
+<p>Moreover, the pseudo-inverse can be used to find the projection operator:</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?AA%5E+%20=%20U_1%20U_1%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brange%7D(A)">.</li>
+<li><img src="https://latex.codecogs.com/png.latex?A%5E+A%20=%20V_1%20V_2%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brange%7D(A%5ET)">.</li>
+<li><img src="https://latex.codecogs.com/png.latex?I-AA%5E+%20=%20U_2U_2%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(A%5ET)">.</li>
+<li><img src="https://latex.codecogs.com/png.latex?I-A%5E+A%20=%20V_2V_2%5ET"> is the orthogonal projection onto <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(A)">.</li>
+</ul>
+
+
+</section>
+</section>
+</div>
+</section>
+
+ ]]></description>
+  <category>Linear Algebra</category>
+  <category>Matrix Computation</category>
+  <category>Optimization</category>
+  <guid>https://xuwkk.github.io/blog/posts/learning/lineat_algebra/matrix_computation.html</guid>
+  <pubDate>Tue, 01 Oct 2024 23:00:00 GMT</pubDate>
+</item>
 <item>
   <title>ADMM: the OSQP Solver Explained!</title>
   <dc:creator>Wangkun Xu</dc:creator>

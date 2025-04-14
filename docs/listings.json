@@ -2,6 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/learning/optimization/cco.html",
+      "/posts/learning/lineat_algebra/matrix_computation.html",
       "/posts/learning/optimization/baisc.html",
       "/posts/learning/optimization/osqp.html",
       "/posts/learning/autometic_differentiation/differetiable_convex_layer.html",
